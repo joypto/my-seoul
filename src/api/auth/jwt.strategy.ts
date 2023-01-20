@@ -13,9 +13,18 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
         @InjectRepository(User)
         private readonly userRepository: Repository<User>
     ) {
+        // JWT configuration
         super({
             secretOrKey: configService.get('JWT_SECRET'),
             jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken()
         });
+    }
+
+    // Validate and return data after JWT decrypted
+    async validate(payload: { username: string }): Promise<User> {
+        const { username } = payload;
+        const user: User = await this.userRepository.findOneBy({ username });
+        if (!user) throw new UnauthorizedException();
+        return user;
     }
 }

@@ -11,7 +11,16 @@ const swagger = (app: INestApplication) => {
         .setTitle(`[${process.env.ENV}] MY SEOUL API`)
         .setDescription('API description used in My Seoul')
         .setVersion('1.0')
+        .addBearerAuth(
+            {
+                type: 'http',
+                scheme: 'bearer',
+                bearerFormat: 'JWT'
+            },
+            'JWT'
+        )
         .build();
+
     const document = SwaggerModule.createDocument(app, config);
     const theme = new SwaggerTheme('v3');
     const options = { explorer: true, customeCss: theme.getBuffer('dark') };

@@ -31,13 +31,14 @@ export class AuthService {
     }
 
     async signIn(dto: AuthDto): Promise<string> {
-        const user = await this.userRepository.findOneBy({ username: dto.username });
+        const user = await this.getUser(dto.username);
 
         if (user && (await this.isValidPassword(dto.password, user.password))) {
             const payload = { username: dto.username };
             const accessToken = this.jwtService.sign(payload);
             return accessToken;
         }
+
         throw new UnauthorizedException('Login failed');
     }
 }
