@@ -1,5 +1,4 @@
-import { INestApplication, ValidationPipe } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
+import { INestApplication, Logger, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { SwaggerTheme } from 'swagger-themes';
@@ -9,7 +8,7 @@ import { TransformInterceptor } from './middleware/transform.interceptor';
 
 const swagger = (app: INestApplication) => {
     const config = new DocumentBuilder()
-        .setTitle('MY SEOUL API')
+        .setTitle(`[${process.env.ENV}] MY SEOUL API`)
         .setDescription('API description used in My Seoul')
         .setVersion('1.0')
         .build();
@@ -27,9 +26,11 @@ const bootstrap = async () => {
 
     swagger(app);
 
-    const configService = app.get(ConfigService);
-    const port = configService.get('PORT');
+    const port = process.env.PORT;
     await app.listen(port);
+
+    const logger = new Logger();
+    logger.log(`Application is running on port: ${port}`);
 };
 
 bootstrap();
