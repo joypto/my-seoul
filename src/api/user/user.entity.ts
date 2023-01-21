@@ -8,6 +8,7 @@ import {
     Unique,
     UpdateDateColumn
 } from 'typeorm';
+import { Collection } from '../collection/collection.entity';
 import { Place } from '../place/place.entity';
 
 @Entity()
@@ -30,8 +31,9 @@ export class User extends BaseEntity {
     @Column({ nullable: true })
     refreshToken?: string | null;
 
-    @OneToMany(() => Place, (place) => place.user, { eager: false, nullable: true })
-    places: Place[];
+    // user can own collections
+    @OneToMany(() => Collection, (collection) => collection.user, { eager: false, nullable: true })
+    collections: Collection[];
 
     constructor(username: string, password: string) {
         super();

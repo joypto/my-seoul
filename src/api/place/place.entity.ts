@@ -8,6 +8,7 @@ import {
     PrimaryGeneratedColumn,
     UpdateDateColumn
 } from 'typeorm';
+import { Collection } from '../collection/collection.entity';
 import { User } from '../user/user.entity';
 
 @Entity()
@@ -33,22 +34,22 @@ export class Place extends BaseEntity {
     @Column()
     longitude: number;
 
-    @ManyToOne(() => User, (user) => user.places, { eager: false })
-    @JoinColumn({ name: 'userId' })
-    user: User;
+    @ManyToOne(() => Collection, (collection) => collection.places, { eager: false })
+    @JoinColumn({ name: 'collectionId' })
+    collection: Collection;
 
     constructor(
         name: string,
         description: string,
         latitude: number,
         longitude: number,
-        user: User
+        collection: Collection
     ) {
         super();
         this.name = name;
         this.description = description;
         this.latitude = latitude;
         this.longitude = longitude;
-        this.user = user;
+        this.collection = collection;
     }
 }

@@ -35,7 +35,7 @@ export class AuthController {
 
     @Post('/refresh')
     @UseGuards(AuthGuard('jwt-refresh'))
-    @ApiOperation({ summary: 'get tokens by refresh token' })
+    @ApiOperation({ summary: 'generate tokens by refresh token' })
     @ApiBearerAuth('JWT')
     async refresh(@Body() dto: AuthRefreshDto): Promise<Token> {
         const tokens = await this.authService.refresh(dto);
