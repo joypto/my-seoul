@@ -5,8 +5,4 @@ export class AuthDto {
     @IsString()
     @ApiProperty({ description: 'username', type: String, required: true })
     username: string;
-
-    @IsString()
-    @ApiProperty({ description: 'password', type: String, required: true })
-    password: string;
 }

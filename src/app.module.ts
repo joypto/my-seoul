@@ -3,9 +3,12 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from './api/auth/auth.module';
-import { User } from './api/auth/user.entity';
+import { User } from './api/user/user.entity';
+import { UserModule } from './api/user/user.module';
 import { AppController } from './app.controller';
 import { LoggerMiddleware } from './middleware/logger.middleware';
+
+const ApiModules = [AuthModule, UserModule];
 
 @Module({
     imports: [
@@ -25,7 +28,7 @@ import { LoggerMiddleware } from './middleware/logger.middleware';
                 autoLoadEntities: true
             })
         }),
-        AuthModule
+        ...ApiModules
     ],
     controllers: [AppController]
 })

@@ -11,6 +11,9 @@ export class User extends BaseEntity {
     @Column()
     password: string;
 
+    @Column({ nullable: true })
+    refreshToken?: string | null;
+
     constructor(username: string, password: string) {
         super();
         this.username = username;
