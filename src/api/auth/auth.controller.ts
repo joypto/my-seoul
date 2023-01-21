@@ -1,5 +1,6 @@
-import { Body, Controller, Post } from '@nestjs/common';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { Body, Controller, Post, UseGuards } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 import { AuthDto } from './dto/basic.dto';
 import { AuthCredentialDto } from './dto/credential.dto';
@@ -24,13 +25,17 @@ export class AuthController {
     }
 
     @Post('signout')
+    @UseGuards(AuthGuard('jwt'))
     @ApiOperation({ summary: 'sign out' })
+    @ApiBearerAuth('JWT')
     async signOut(@Body() dto: AuthDto): Promise<void> {
         await this.authService.signOut(dto);
     }
 
     @Post('/refresh')
+    @UseGuards(AuthGuard('jwt-refresh'))
     @ApiOperation({ summary: 'get tokens by refresh token' })
+    @ApiBearerAuth('JWT')
     async refresh(@Body() dto: AuthRefreshDto): Promise<Token> {
         const tokens = await this.authService.refresh(dto);
         return tokens;

@@ -43,7 +43,7 @@ export class AuthService {
         return { accessToken, refreshToken };
     }
 
-    private async changeRefreshToken(username: string, refreshToken: string): Promise<void> {
+    private async updateRefreshToken(username: string, refreshToken: string): Promise<void> {
         if (refreshToken) {
             refreshToken = await this.hash<string>(refreshToken);
         }
@@ -66,7 +66,7 @@ export class AuthService {
         if (user && (await this.isValidHash(dto.password, user.password))) {
             const payload = { username: dto.username };
             const tokens = await this.generateTokens(payload);
-            await this.changeRefreshToken(dto.username, tokens.refreshToken);
+            await this.updateRefreshToken(dto.username, tokens.refreshToken);
             return tokens;
         }
         throw new UnauthorizedException('Invalid credentials');
@@ -74,7 +74,7 @@ export class AuthService {
 
     async signOut(dto: AuthDto): Promise<void> {
         const user = await this.userService.findOneBy(dto.username);
-        if (user) await this.changeRefreshToken(dto.username, null);
+        if (user) await this.updateRefreshToken(dto.username, null);
     }
 
     async refresh(dto: AuthRefreshDto): Promise<Token> {
@@ -86,7 +86,7 @@ export class AuthService {
         ) {
             const payload = { username: dto.username };
             const tokens = await this.generateTokens(payload);
-            await this.changeRefreshToken(dto.username, tokens.refreshToken);
+            await this.updateRefreshToken(dto.username, tokens.refreshToken);
             return tokens;
         }
         throw new UnauthorizedException('Invalid refresh token');
