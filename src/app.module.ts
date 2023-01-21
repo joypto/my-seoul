@@ -3,12 +3,14 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from './api/auth/auth.module';
+import { Place } from './api/place/place.entity';
+import { PlaceModule } from './api/place/place.module';
 import { User } from './api/user/user.entity';
 import { UserModule } from './api/user/user.module';
 import { AppController } from './app.controller';
 import { LoggerMiddleware } from './middleware/logger.middleware';
 
-const ApiModules = [AuthModule, UserModule];
+const ApiModules = [AuthModule, UserModule, PlaceModule];
 
 @Module({
     imports: [
@@ -24,7 +26,7 @@ const ApiModules = [AuthModule, UserModule];
                 // password: cs.get('DB_PASSWORD'),
                 database: cs.get('DB_NAME'),
                 synchronize: true,
-                entities: [User],
+                entities: [User, Place],
                 autoLoadEntities: true
             })
         }),

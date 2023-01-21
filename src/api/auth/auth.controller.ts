@@ -1,4 +1,4 @@
-import { Body, Controller, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Post, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
@@ -8,6 +8,7 @@ import { AuthRefreshDto } from './dto/refresh.dto';
 import { Token } from './types/token.type';
 
 @Controller('auth')
+@UsePipes(ValidationPipe)
 @ApiTags('Auth')
 export class AuthController {
     constructor(private readonly authService: AuthService) {}
