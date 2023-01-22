@@ -29,6 +29,9 @@ export class Collection extends BaseEntity {
     @Column({ nullable: true })
     description: string | null;
 
+    @Column()
+    userId: number;
+
     @ManyToOne(() => User, (user) => user.collections, { eager: false })
     @JoinColumn({ name: 'userId' })
     user: User;

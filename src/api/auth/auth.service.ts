@@ -61,7 +61,7 @@ export class AuthService {
     }
 
     async signIn(dto: AuthCredentialDto): Promise<Token> {
-        const user = await this.userService.findOneBy(dto.username);
+        const user = await this.userService.findOneByUsername(dto.username);
 
         if (user && (await this.isValidHash(dto.password, user.password))) {
             const payload = { username: dto.username };
@@ -73,12 +73,12 @@ export class AuthService {
     }
 
     async signOut(dto: AuthDto): Promise<void> {
-        const user = await this.userService.findOneBy(dto.username);
+        const user = await this.userService.findOneByUsername(dto.username);
         if (user) await this.updateRefreshToken(dto.username, null);
     }
 
     async refresh(dto: AuthRefreshDto): Promise<Token> {
-        const user = await this.userService.findOneBy(dto.username);
+        const user = await this.userService.findOneByUsername(dto.username);
         if (
             user &&
             user.refreshToken &&

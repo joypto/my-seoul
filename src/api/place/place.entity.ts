@@ -34,6 +34,9 @@ export class Place extends BaseEntity {
     @Column()
     longitude: number;
 
+    @Column()
+    collectionId: number;
+
     @ManyToOne(() => Collection, (collection) => collection.places, { eager: false })
     @JoinColumn({ name: 'collectionId' })
     collection: Collection;

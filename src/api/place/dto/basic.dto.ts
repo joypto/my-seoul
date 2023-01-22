@@ -1,6 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsNotEmpty, IsNumber } from 'class-validator';
-import { User } from 'src/api/user/user.entity';
+import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
 
 export class PlaceDto {
     @IsString()
@@ -10,7 +9,7 @@ export class PlaceDto {
 
     @IsString()
     @ApiProperty({ description: 'description', type: String, nullable: true })
-    description: string;
+    description: string | null;
 
     @IsNumber()
     @IsNotEmpty()

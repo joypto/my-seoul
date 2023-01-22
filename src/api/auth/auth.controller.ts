@@ -16,7 +16,7 @@ export class AuthController {
     @Post('/signup')
     @ApiOperation({ summary: 'sign up' })
     async signUp(@Body() dto: AuthCredentialDto): Promise<void> {
-        return await this.authService.signUp(dto);
+        await this.authService.signUp(dto);
     }
 
     @Post('/signin')
@@ -38,7 +38,6 @@ export class AuthController {
     @ApiOperation({ summary: 'generate tokens by refresh token' })
     @ApiBearerAuth('JWT')
     async refresh(@Body() dto: AuthRefreshDto): Promise<Token> {
-        const tokens = await this.authService.refresh(dto);
-        return tokens;
+        return await this.authService.refresh(dto);
     }
 }

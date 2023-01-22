@@ -3,7 +3,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { PlaceService } from './place.service';
 
-@Controller('place')
+@Controller('places')
 @UsePipes(ValidationPipe)
 @UseGuards(AuthGuard('jwt'))
 @ApiTags('Place')
