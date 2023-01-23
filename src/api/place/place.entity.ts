@@ -1,26 +1,11 @@
-import {
-    BaseEntity,
-    Column,
-    CreateDateColumn,
-    Entity,
-    JoinColumn,
-    ManyToOne,
-    PrimaryGeneratedColumn,
-    UpdateDateColumn
-} from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { Collection } from '../collection/collection.entity';
-import { User } from '../user/user.entity';
+import { AbstractEntity } from '../common/abstract.entity';
 
 @Entity()
-export class Place extends BaseEntity {
+export class Place extends AbstractEntity {
     @PrimaryGeneratedColumn()
     id: number;
-
-    @CreateDateColumn()
-    createdAt: Date;
-
-    @UpdateDateColumn()
-    updatedAt: Date;
 
     @Column()
     name: string;

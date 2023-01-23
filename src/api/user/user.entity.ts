@@ -1,26 +1,11 @@
-import {
-    BaseEntity,
-    Column,
-    CreateDateColumn,
-    Entity,
-    OneToMany,
-    PrimaryGeneratedColumn,
-    Unique,
-    UpdateDateColumn
-} from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { Collection } from '../collection/collection.entity';
-import { Place } from '../place/place.entity';
+import { AbstractEntity } from '../common/abstract.entity';
 
 @Entity()
-export class User extends BaseEntity {
+export class User extends AbstractEntity {
     @PrimaryGeneratedColumn()
     id: number;
-
-    @CreateDateColumn()
-    createdAt: Date;
-
-    @UpdateDateColumn()
-    updatedAt: Date;
 
     @Column({ unique: true })
     username: string;
@@ -33,7 +18,7 @@ export class User extends BaseEntity {
 
     // user can own collections
     @OneToMany(() => Collection, (collection) => collection.user, { eager: false, nullable: true })
-    collections: Collection[];
+    collections: Collection[] | null;
 
     constructor(username: string, password: string) {
         super();

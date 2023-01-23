@@ -1,27 +1,12 @@
-import {
-    BaseEntity,
-    Column,
-    CreateDateColumn,
-    Entity,
-    JoinColumn,
-    ManyToOne,
-    OneToMany,
-    PrimaryGeneratedColumn,
-    UpdateDateColumn
-} from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { AbstractEntity } from '../common/abstract.entity';
 import { Place } from '../place/place.entity';
 import { User } from '../user/user.entity';
 
 @Entity()
-export class Collection extends BaseEntity {
+export class Collection extends AbstractEntity {
     @PrimaryGeneratedColumn()
     id: number;
-
-    @CreateDateColumn()
-    createdAt: Date;
-
-    @UpdateDateColumn()
-    updatedAt: Date;
 
     @Column()
     name: string;
@@ -37,5 +22,5 @@ export class Collection extends BaseEntity {
     user: User;
 
     @OneToMany(() => Place, (place) => place.collection, { eager: false, nullable: true })
-    places: Place[];
+    places: Place[] | null;
 }
