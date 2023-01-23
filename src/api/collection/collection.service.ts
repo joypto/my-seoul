@@ -1,6 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { PageMetaDto } from '../common/dto/page-meta.dto';
+import { PageOptionDto } from '../common/dto/page-option.dto';
+import { PageDto } from '../common/dto/page.dto';
 import { User } from '../user/user.entity';
 import { Collection } from './collection.entity';
 import { CollectionDto } from './dto/basic.dto';
@@ -18,12 +21,29 @@ export class CollectionService {
         return collection;
     }
 
-    async findAll(): Promise<Collection[]> {
-        return await this.collectionRepository.find();
+    async findAll(options: PageOptionDto): Promise<PageDto<Collection>> {
+        const queryBuilder = this.collectionRepository.createQueryBuilder('collection');
+        queryBuilder.skip(options.skip).take(options.take);
+
+        const itemCount = await queryBuilder.getCount();
+        const { entities } = await queryBuilder.getRawAndEntities();
+        const pageMeta = new PageMetaDto(options, itemCount);
+
+        return new PageDto(entities, pageMeta);
     }
 
-    async findByUserId(userId: number): Promise<Collection[]> {
-        return await this.collectionRepository.findBy({ userId });
+    async findByUserId(authorId: number, options: PageOptionDto): Promise<PageDto<Collection>> {
+        const queryBuilder = this.collectionRepository.createQueryBuilder('collection');
+        queryBuilder
+            .where('authorId = :authorId', { authorId })
+            .skip(options.skip)
+            .take(options.take);
+
+        const itemCount = await queryBuilder.getCount();
+        const { entities } = await queryBuilder.getRawAndEntities();
+        const pageMeta = new PageMetaDto(options, itemCount);
+
+        return new PageDto(entities, pageMeta);
     }
 
     async findOneById(collectionId: number): Promise<Collection> {

@@ -15,10 +15,10 @@ export class Collection extends AbstractEntity {
     description: string | null;
 
     @Column()
-    userId: number;
+    authorId: number;
 
     @ManyToOne(() => User, (user) => user.collections, { eager: false })
-    @JoinColumn({ name: 'userId' })
+    @JoinColumn({ name: 'authorId' })
     author: User;
 
     @OneToMany(() => Place, (place) => place.collection, { eager: false, nullable: true })
