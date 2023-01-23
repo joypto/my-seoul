@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { PageUtil } from 'src/util/page.util';
 import { Repository } from 'typeorm';
 import { PageMetaDto } from '../common/dto/page-meta.dto';
 import { PageOptionDto } from '../common/dto/page-option.dto';
@@ -25,11 +26,7 @@ export class CollectionService {
         const queryBuilder = this.collectionRepository.createQueryBuilder('collection');
         queryBuilder.skip(options.skip).take(options.take);
 
-        const itemCount = await queryBuilder.getCount();
-        const { entities } = await queryBuilder.getRawAndEntities();
-        const pageMeta = new PageMetaDto(options, itemCount);
-
-        return new PageDto(entities, pageMeta);
+        return await new PageUtil<Collection>().getResponse(queryBuilder, options);
     }
 
     async findByUserId(authorId: number, options: PageOptionDto): Promise<PageDto<Collection>> {
@@ -39,11 +36,7 @@ export class CollectionService {
             .skip(options.skip)
             .take(options.take);
 
-        const itemCount = await queryBuilder.getCount();
-        const { entities } = await queryBuilder.getRawAndEntities();
-        const pageMeta = new PageMetaDto(options, itemCount);
-
-        return new PageDto(entities, pageMeta);
+        return await new PageUtil<Collection>().getResponse(queryBuilder, options);
     }
 
     async findOneById(collectionId: number): Promise<Collection> {
