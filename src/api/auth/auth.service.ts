@@ -26,7 +26,7 @@ export class AuthService {
         return await bcrypt.compare(requestedData, ownedData);
     }
 
-    private async hash<T>(data: T): Promise<T> {
+    private async hash<T>(data: T): Promise<string> {
         const salt = await bcrypt.genSalt();
         return await bcrypt.hash(data, salt);
     }
@@ -43,7 +43,7 @@ export class AuthService {
         return { accessToken, refreshToken };
     }
 
-    private async updateRefreshToken(username: string, refreshToken: string): Promise<void> {
+    private async updateRefreshToken(username: string, refreshToken: string | null): Promise<void> {
         if (refreshToken) {
             refreshToken = await this.hash<string>(refreshToken);
         }

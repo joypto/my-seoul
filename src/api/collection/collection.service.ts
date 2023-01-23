@@ -13,7 +13,7 @@ export class CollectionService {
     ) {}
 
     async create(user: User, dto: CollectionDto): Promise<Collection> {
-        const collection = this.collectionRepository.create({ ...dto, user });
+        const collection = this.collectionRepository.create({ ...dto, author: user });
         await this.collectionRepository.save(collection);
         return collection;
     }
@@ -22,11 +22,11 @@ export class CollectionService {
         return await this.collectionRepository.find();
     }
 
-    async findById(collectionId: number): Promise<Collection[]> {
-        return await this.collectionRepository.findBy({ id: collectionId });
-    }
-
     async findByUserId(userId: number): Promise<Collection[]> {
         return await this.collectionRepository.findBy({ userId });
+    }
+
+    async findOneById(collectionId: number): Promise<Collection> {
+        return await this.collectionRepository.findOneBy({ id: collectionId });
     }
 }

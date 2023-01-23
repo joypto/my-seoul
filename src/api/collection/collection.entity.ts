@@ -19,7 +19,7 @@ export class Collection extends AbstractEntity {
 
     @ManyToOne(() => User, (user) => user.collections, { eager: false })
     @JoinColumn({ name: 'userId' })
-    user: User;
+    author: User;
 
     @OneToMany(() => Place, (place) => place.collection, { eager: false, nullable: true })
     places: Place[] | null;

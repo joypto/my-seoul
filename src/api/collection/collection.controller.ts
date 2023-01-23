@@ -5,6 +5,7 @@ import {
     Param,
     ParseIntPipe,
     Post,
+    Query,
     UseGuards,
     UsePipes,
     ValidationPipe
@@ -33,14 +34,9 @@ export class CollectionController {
 
     @Get()
     @ApiOperation({ summary: 'get all collections' })
-    async getAll(): Promise<Collection[]> {
+    async get(@Query() query: { authorId: number }): Promise<Collection[]> {
+        if (query.authorId) return await this.collectionService.findByUserId(query.authorId);
         return await this.collectionService.findAll();
-    }
-
-    @Get('/:id')
-    @ApiOperation({ summary: 'get collections by id' })
-    async getById(@Param('id', ParseIntPipe) id: number): Promise<Collection[]> {
-        return await this.collectionService.findById(id);
     }
 
     @Get('/me')
@@ -49,9 +45,9 @@ export class CollectionController {
         return await this.collectionService.findByUserId(user.id);
     }
 
-    @Get('/:userId')
-    @ApiOperation({ summary: 'get collections by user id' })
-    async getByUserId(@Param('userId', ParseIntPipe) userId: number): Promise<Collection[]> {
-        return await this.collectionService.findByUserId(userId);
+    @Get('/:id')
+    @ApiOperation({ summary: 'get collections by id' })
+    async getOneById(@Param('id', ParseIntPipe) id: number): Promise<Collection> {
+        return await this.collectionService.findOneById(id);
     }
 }

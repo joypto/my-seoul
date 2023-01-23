@@ -17,7 +17,10 @@ export class User extends AbstractEntity {
     refreshToken?: string | null;
 
     // user can own collections
-    @OneToMany(() => Collection, (collection) => collection.user, { eager: false, nullable: true })
+    @OneToMany(() => Collection, (collection) => collection.author, {
+        eager: false,
+        nullable: true
+    })
     collections: Collection[] | null;
 
     constructor(username: string, password: string) {
