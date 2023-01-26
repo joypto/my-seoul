@@ -23,4 +23,8 @@ export class Collection extends AbstractEntity {
 
     @OneToMany(() => Place, (place) => place.collection, { eager: false, nullable: true })
     places: Place[] | null;
+
+    isAuthor(userId: number): boolean {
+        return userId === this.authorId;
+    }
 }

@@ -1,9 +1,11 @@
 import {
     Body,
     Controller,
+    Delete,
     Get,
     Param,
     ParseIntPipe,
+    Patch,
     Post,
     Query,
     UseGuards,
@@ -56,5 +58,22 @@ export class CollectionController {
     @ApiOperation({ summary: 'get collections by id' })
     async getOneById(@Param('id', ParseIntPipe) id: number): Promise<Collection> {
         return await this.collectionService.findOneById(id);
+    }
+
+    @Patch('/:id')
+    async updateOneById(
+        @AuthUser() user: User,
+        @Param('id', ParseIntPipe) id: number,
+        @Body() dto: CollectionDto
+    ): Promise<Collection> {
+        return await this.collectionService.updateOne(user, id, dto);
+    }
+
+    @Delete('/:id')
+    async deleteOneById(
+        @AuthUser() user: User,
+        @Param('id', ParseIntPipe) id: number
+    ): Promise<void> {
+        await this.collectionService.deleteOne(user, id);
     }
 }

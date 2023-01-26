@@ -1,8 +1,7 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PageUtil } from 'src/util/page.util';
 import { Repository } from 'typeorm';
-import { PageMetaDto } from '../common/dto/page-meta.dto';
 import { PageOptionDto } from '../common/dto/page-option.dto';
 import { PageDto } from '../common/dto/page.dto';
 import { User } from '../user/user.entity';
@@ -41,5 +40,18 @@ export class CollectionService {
 
     async findOneById(collectionId: number): Promise<Collection> {
         return await this.collectionRepository.findOneBy({ id: collectionId });
+    }
+
+    async updateOne(user: User, collectionId: number, dto: CollectionDto): Promise<Collection> {
+        const collection = await this.findOneById(collectionId);
+        if (!collection.isAuthor(user.id)) throw new BadRequestException('Invalid author');
+
+        if (dto.name) collection.name = dto.name;
+        if (dto.description) collection.description = dto.description;
+        return await this.collectionRepository.save(collection);
+    }
+
+    async deleteOne(user: User, collectionId: number): Promise<void> {
+        await this.collectionRepository.delete({ id: collectionId, authorId: user.id });
     }
 }
