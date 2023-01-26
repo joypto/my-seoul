@@ -1,14 +1,15 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
 
-export class PlaceDto {
+export class CreatePlaceDto {
     @IsString()
     @IsNotEmpty()
     @ApiProperty({ description: 'name', type: String, required: true })
     name: string;
 
     @IsString()
-    @ApiProperty({ description: 'description', type: String, nullable: true })
+    @IsOptional()
+    @ApiPropertyOptional({ description: 'description', type: String, nullable: true })
     description: string | null;
 
     @IsNumber()
@@ -20,4 +21,9 @@ export class PlaceDto {
     @IsNotEmpty()
     @ApiProperty({ description: 'longitude', type: Number, required: true })
     longitude: number;
+
+    @IsNumber()
+    @IsNotEmpty()
+    @ApiProperty({ description: 'collectionId', type: Number, required: true })
+    collectionId: number;
 }

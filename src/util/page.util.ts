@@ -1,6 +1,6 @@
-import { PageMetaDto } from 'src/api/common/dto/page-meta.dto';
-import { PageOptionDto } from 'src/api/common/dto/page-option.dto';
-import { PageDto } from 'src/api/common/dto/page.dto';
+import { PageMeta } from 'src/api/common/page/meta.dto';
+import { PageOption } from 'src/api/common/page/option.dto';
+import { Page } from 'src/api/common/page/page.dto';
 import { SelectQueryBuilder } from 'typeorm';
 
 export class PageUtil<T> {
@@ -11,18 +11,18 @@ export class PageUtil<T> {
 
     private async getMeta(
         queryBuilder: SelectQueryBuilder<T>,
-        pageOptions: PageOptionDto
-    ): Promise<PageMetaDto> {
+        pageOptions: PageOption
+    ): Promise<PageMeta> {
         const itemCount = await queryBuilder.getCount();
-        return new PageMetaDto(pageOptions, itemCount);
+        return new PageMeta(pageOptions, itemCount);
     }
 
     async getResponse(
         queryBuilder: SelectQueryBuilder<T>,
-        pageOptions: PageOptionDto
-    ): Promise<PageDto<T>> {
+        pageOptions: PageOption
+    ): Promise<Page<T>> {
         const pageData = await this.getData(queryBuilder);
         const pageMeta = await this.getMeta(queryBuilder, pageOptions);
-        return new PageDto(pageData, pageMeta);
+        return new Page(pageData, pageMeta);
     }
 }

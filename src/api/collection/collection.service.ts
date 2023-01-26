@@ -2,8 +2,8 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PageUtil } from 'src/util/page.util';
 import { Repository } from 'typeorm';
-import { PageOptionDto } from '../common/dto/page-option.dto';
-import { PageDto } from '../common/dto/page.dto';
+import { PageOption } from '../common/page/option.dto';
+import { Page } from '../common/page/page.dto';
 import { User } from '../user/user.entity';
 import { Collection } from './collection.entity';
 import { CollectionDto } from './dto/basic.dto';
@@ -21,14 +21,14 @@ export class CollectionService {
         return collection;
     }
 
-    async findAll(options: PageOptionDto): Promise<PageDto<Collection>> {
+    async findAll(options: PageOption): Promise<Page<Collection>> {
         const queryBuilder = this.collectionRepository.createQueryBuilder('collection');
         queryBuilder.skip(options.skip).take(options.take);
 
         return await new PageUtil<Collection>().getResponse(queryBuilder, options);
     }
 
-    async findByUserId(authorId: number, options: PageOptionDto): Promise<PageDto<Collection>> {
+    async findByUserId(authorId: number, options: PageOption): Promise<Page<Collection>> {
         const queryBuilder = this.collectionRepository.createQueryBuilder('collection');
         queryBuilder
             .where('authorId = :authorId', { authorId })

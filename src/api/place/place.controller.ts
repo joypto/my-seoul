@@ -1,6 +1,26 @@
-import { Controller, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
+import {
+    Body,
+    Controller,
+    Delete,
+    Get,
+    Param,
+    ParseIntPipe,
+    Patch,
+    Post,
+    Query,
+    UseGuards,
+    UsePipes,
+    ValidationPipe
+} from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { AuthUser } from '../auth/authUser.decorator';
+import { Page } from '../common/page/page.dto';
+import { User } from '../user/user.entity';
+import { CreatePlaceDto } from './dto/createPlace.dto';
+import { ReadPlaceDto } from './dto/readPlace.dto';
+import { UpdatePlaceDto } from './dto/updatePlace.dto';
+import { Place } from './place.entity';
 import { PlaceService } from './place.service';
 
 @Controller('places')
@@ -10,4 +30,43 @@ import { PlaceService } from './place.service';
 @ApiBearerAuth('JWT')
 export class PlaceController {
     constructor(private readonly placeService: PlaceService) {}
+
+    @Post()
+    @ApiOperation({ summary: 'create my place' })
+    async create(@Body() dto: CreatePlaceDto): Promise<Place> {
+        return await this.placeService.create(dto);
+    }
+
+    @Get()
+    @ApiOperation({ summary: 'get places' })
+    async get(@Query() dto: ReadPlaceDto): Promise<Page<Place>> {
+        if (dto.collectionId)
+            return await this.placeService.findByCollectionId(dto.collectionId, dto.pageOptions);
+        return await this.placeService.findAll(dto.pageOptions);
+    }
+
+    @Get('/:id')
+    @ApiOperation({ summary: 'get place by id' })
+    async getOneById(@Param('id', ParseIntPipe) id: number): Promise<Place> {
+        return await this.placeService.findOneById(id);
+    }
+
+    @Patch('/:id')
+    @ApiOperation({ summary: 'update collection' })
+    async updateOneById(
+        @AuthUser() user: User,
+        @Param('id', ParseIntPipe) id: number,
+        @Body() dto: UpdatePlaceDto
+    ): Promise<Place> {
+        return await this.placeService.updateOne(user, id, dto);
+    }
+
+    @Delete('/:id')
+    @ApiOperation({ summary: 'delete collection' })
+    async deleteOneById(
+        @AuthUser() user: User,
+        @Param('id', ParseIntPipe) id: number
+    ): Promise<void> {
+        await this.placeService.deleteOne(user, id);
+    }
 }

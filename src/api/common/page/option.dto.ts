@@ -3,7 +3,7 @@ import { Type } from 'class-transformer';
 import { IsEnum, IsInt, IsOptional, Max, Min } from 'class-validator';
 import { Order } from 'src/constants/consts';
 
-export class PageOptionDto {
+export class PageOption {
     @IsEnum(Order)
     @IsOptional()
     @ApiPropertyOptional({ enum: Order, default: Order.ASC })
