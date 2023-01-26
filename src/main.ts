@@ -29,7 +29,15 @@ const swagger = (app: INestApplication) => {
 
 const bootstrap = async () => {
     const app = await NestFactory.create(AppModule);
-    app.useGlobalPipes(new ValidationPipe({ transform: true }));
+
+    app.useGlobalPipes(
+        new ValidationPipe({
+            transform: true,
+            transformOptions: {
+                enableImplicitConversion: true
+            }
+        })
+    );
     app.useGlobalInterceptors(new TransformInterceptor());
     app.useGlobalFilters(new HttpExceptionFilter());
 
@@ -37,7 +45,6 @@ const bootstrap = async () => {
 
     const port = process.env.PORT;
     await app.listen(port);
-
     const logger = new Logger();
     logger.log(`Application is running on port: ${port}`);
 };
