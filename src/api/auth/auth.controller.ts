@@ -1,10 +1,13 @@
 import { Body, Controller, Post, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { User } from '../user/user.entity';
 import { AuthService } from './auth.service';
+import { AuthUser } from './authUser.decorator';
 import { AuthDto } from './dto/basic.dto';
 import { AuthCredentialDto } from './dto/credential.dto';
 import { AuthRefreshDto } from './dto/refresh.dto';
+import { UpdatePasswordDto } from './dto/updatePassword.dto';
 import { Token } from './types/token.type';
 
 @Controller('auth')
@@ -39,5 +42,13 @@ export class AuthController {
     @ApiBearerAuth('JWT')
     async refresh(@Body() dto: AuthRefreshDto): Promise<Token> {
         return await this.authService.refresh(dto);
+    }
+
+    @Post('/password')
+    @UseGuards(AuthGuard('jwt'))
+    @ApiOperation({ summary: 'reset password' })
+    @ApiBearerAuth('JWT')
+    async updatePassword(@AuthUser() user: User, @Body() dto: UpdatePasswordDto): Promise<void> {
+        await this.authService.updatePassword(user, dto);
     }
 }

@@ -12,11 +12,11 @@ export class User extends AbstractEntity {
     @Column({ unique: true })
     username: string;
 
-    @Column({ select: false })
+    @Column()
     @Exclude()
     password: string;
 
-    @Column({ nullable: true, select: false })
+    @Column({ nullable: true })
     @Exclude()
     refreshToken?: string | null;
 

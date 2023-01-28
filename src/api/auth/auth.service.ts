@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -9,6 +9,7 @@ import { UserService } from '../user/user.service';
 import { AuthDto } from './dto/basic.dto';
 import { AuthCredentialDto } from './dto/credential.dto';
 import { AuthRefreshDto } from './dto/refresh.dto';
+import { UpdatePasswordDto } from './dto/updatePassword.dto';
 import { Payload } from './types/payload.type';
 import { Token } from './types/token.type';
 
@@ -90,5 +91,17 @@ export class AuthService {
             return tokens;
         }
         throw new UnauthorizedException('Invalid refresh token');
+    }
+
+    async updatePassword(user: User, dto: UpdatePasswordDto): Promise<void> {
+        const userFromDatabase = await this.userService.findOneByUsername(user.username);
+        if (!userFromDatabase) throw new BadRequestException('Invalid User');
+        if (!(await this.isValidHash(dto.oldPassword, userFromDatabase.password)))
+            throw new BadRequestException('Invalid password');
+
+        const hashedPassword = await this.hash<string>(dto.newPassword);
+        userFromDatabase.password = hashedPassword;
+        userFromDatabase.refreshToken = null; // logout occurs with update password
+        await this.userService.updateUser(userFromDatabase);
     }
 }
