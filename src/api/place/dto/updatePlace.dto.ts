@@ -22,6 +22,11 @@ export class UpdatePlaceDto {
     @ApiPropertyOptional({ description: 'longitude', type: Number })
     longitude: number | null;
 
+    @IsString()
+    @IsOptional()
+    @ApiPropertyOptional({ description: 'address', type: String })
+    address: string | undefined;
+
     @IsNumber()
     @IsOptional()
     @ApiPropertyOptional({ description: 'collectionId', type: Number })

@@ -54,6 +54,7 @@ export class PlaceService {
             place.latitude = dto.latitude;
             place.longitude = dto.longitude;
         }
+        if (dto.address) place.address = dto.address;
         if (dto.collectionId) place.collectionId = dto.collectionId;
 
         return await this.placeRepository.save(place);

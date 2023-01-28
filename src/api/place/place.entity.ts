@@ -19,6 +19,9 @@ export class Place extends AbstractEntity {
     @Column()
     longitude: number;
 
+    @Column({ nullable: true })
+    address: string | null;
+
     @Column()
     collectionId: number; // for get collectionId without join
 
