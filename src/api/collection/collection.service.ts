@@ -39,7 +39,7 @@ export class CollectionService {
     }
 
     async findOneById(collectionId: number): Promise<Collection> {
-        return await this.collectionRepository.findOneBy({ id: collectionId });
+        return await this.collectionRepository.findOne({ where: { id: collectionId } });
     }
 
     async updateOne(

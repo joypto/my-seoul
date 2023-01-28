@@ -25,7 +25,7 @@ export class AuthController {
         return await this.authService.signIn(dto);
     }
 
-    @Post('signout')
+    @Post('/signout')
     @UseGuards(AuthGuard('jwt'))
     @ApiOperation({ summary: 'sign out' })
     @ApiBearerAuth('JWT')
