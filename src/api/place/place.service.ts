@@ -40,13 +40,15 @@ export class PlaceService {
     }
 
     async findOneById(placeId: number): Promise<Place> {
-        return await this.placeRepository.findOneBy({ id: placeId });
+        return await this.placeRepository.findOne({
+            where: { id: placeId },
+            relations: ['collection'] // left join
+        });
     }
 
     async updateOne(user: User, placeId: number, dto: UpdatePlaceDto): Promise<Place> {
         const place = await this.findOneById(placeId);
-        const collection = place.collection;
-        if (!collection.isAuthor(user.id)) throw new BadRequestException('Invalid author');
+        if (!place.collection.isAuthor(user.id)) throw new BadRequestException('Invalid author');
 
         if (dto.name) place.name = dto.name;
         if (dto.description) place.description = dto.description;
