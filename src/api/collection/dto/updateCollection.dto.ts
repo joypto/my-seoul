@@ -1,14 +1,14 @@
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { ApiPropertyOptional } from '@nestjs/swagger';
+import { IsOptional, IsString } from 'class-validator';
 
-export class CollectionDto {
+export class UpdateCollectionDto {
     @IsString()
     @IsOptional()
     @ApiPropertyOptional({ description: 'name', type: String, nullable: true })
-    name: string;
+    name: string | undefined;
 
     @IsString()
     @IsOptional()
     @ApiPropertyOptional({ description: 'description', type: String, nullable: true })
-    description: string | null;
+    description: string | undefined;
 }

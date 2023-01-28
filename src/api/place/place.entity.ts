@@ -20,7 +20,7 @@ export class Place extends AbstractEntity {
     longitude: number;
 
     @Column()
-    collectionId: number;
+    collectionId: number; // for get collectionId without join
 
     @ManyToOne(() => Collection, (collection) => collection.places, { eager: false })
     @JoinColumn({ name: 'collectionId' })

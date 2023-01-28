@@ -20,8 +20,9 @@ import { Page } from '../common/page/page.dto';
 import { User } from '../user/user.entity';
 import { Collection } from './collection.entity';
 import { CollectionService } from './collection.service';
-import { CollectionDto } from './dto/basic.dto';
+import { UpdateCollectionDto } from './dto/updateCollection.dto';
 import { ReadCollectionDto } from './dto/readCollection.dto';
+import { CreateCollectionDto } from './dto/createCollection.dto';
 
 @Controller('collections')
 @UsePipes(ValidationPipe)
@@ -33,7 +34,7 @@ export class CollectionController {
 
     @Post()
     @ApiOperation({ summary: 'create collection' })
-    async create(@AuthUser() user: User, @Body() dto: CollectionDto): Promise<Collection> {
+    async create(@AuthUser() user: User, @Body() dto: CreateCollectionDto): Promise<Collection> {
         return await this.collectionService.create(user, dto);
     }
 
@@ -65,7 +66,7 @@ export class CollectionController {
     async updateOneById(
         @AuthUser() user: User,
         @Param('id', ParseIntPipe) id: number,
-        @Body() dto: CollectionDto
+        @Body() dto: UpdateCollectionDto
     ): Promise<Collection> {
         return await this.collectionService.updateOne(user, id, dto);
     }

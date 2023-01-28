@@ -6,7 +6,7 @@ import { PageOption } from '../common/page/option.dto';
 import { Page } from '../common/page/page.dto';
 import { User } from '../user/user.entity';
 import { Collection } from './collection.entity';
-import { CollectionDto } from './dto/basic.dto';
+import { UpdateCollectionDto } from './dto/updateCollection.dto';
 
 @Injectable()
 export class CollectionService {
@@ -15,7 +15,7 @@ export class CollectionService {
         private readonly collectionRepository: Repository<Collection>
     ) {}
 
-    async create(user: User, dto: CollectionDto): Promise<Collection> {
+    async create(user: User, dto: UpdateCollectionDto): Promise<Collection> {
         const collection = this.collectionRepository.create({ ...dto, author: user });
         await this.collectionRepository.save(collection);
         return collection;
@@ -42,7 +42,11 @@ export class CollectionService {
         return await this.collectionRepository.findOneBy({ id: collectionId });
     }
 
-    async updateOne(user: User, collectionId: number, dto: CollectionDto): Promise<Collection> {
+    async updateOne(
+        user: User,
+        collectionId: number,
+        dto: UpdateCollectionDto
+    ): Promise<Collection> {
         const collection = await this.findOneById(collectionId);
         if (!collection.isAuthor(user.id)) throw new BadRequestException('Invalid author');
 

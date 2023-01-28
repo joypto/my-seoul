@@ -25,7 +25,6 @@ export class PlaceService {
     async findAll(options: PageOption): Promise<Page<Place>> {
         const queryBuilder = this.placeRepository.createQueryBuilder('place');
         queryBuilder.skip(options.skip).take(options.take);
-
         return await new PageUtil<Place>().getResponse(queryBuilder, options);
     }
 
@@ -35,7 +34,6 @@ export class PlaceService {
             .where('collectionId = :collectionId', { collectionId })
             .skip(options.skip)
             .take(options.take);
-
         return await new PageUtil<Place>().getResponse(queryBuilder, options);
     }
 
@@ -56,6 +54,7 @@ export class PlaceService {
             place.latitude = dto.latitude;
             place.longitude = dto.longitude;
         }
+        if (dto.collectionId) place.collectionId = dto.collectionId;
 
         return await this.placeRepository.save(place);
     }

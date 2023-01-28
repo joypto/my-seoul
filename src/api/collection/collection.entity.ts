@@ -15,7 +15,7 @@ export class Collection extends AbstractEntity {
     description: string | null;
 
     @Column()
-    authorId: number;
+    authorId: number; // for get authorId without join
 
     @ManyToOne(() => User, (user) => user.collections, { eager: false })
     @JoinColumn({ name: 'authorId' })

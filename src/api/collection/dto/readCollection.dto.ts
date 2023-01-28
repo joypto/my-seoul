@@ -7,7 +7,7 @@ export class ReadCollectionDto extends PageOption {
     @IsNumber()
     @IsOptional()
     @ApiPropertyOptional({ description: 'authorId', type: Number })
-    authorId: number;
+    authorId: number | undefined;
 
     get pageOptions(): PageOption {
         return Builder(PageOption).order(this.order).page(this.page).take(this.take).build();
