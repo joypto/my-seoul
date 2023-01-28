@@ -1,7 +1,10 @@
 import {
     Body,
     Controller,
+    Delete,
     Get,
+    Param,
+    ParseIntPipe,
     Post,
     Query,
     UseGuards,
@@ -43,5 +46,14 @@ export class BookmarkController {
     @ApiOperation({ summary: 'get users who have bookmarked the collection' })
     async getUsers(@Query() dto: ReadBookmarkUserDto): Promise<Page<Bookmark>> {
         return await this.bookmarkService.findUsers(dto.collectionId, dto.pageOptions);
+    }
+
+    @Delete('/:collectionId')
+    @ApiOperation({ summary: 'cancel bookmark collection' })
+    async cancel(
+        @AuthUser() user: User,
+        @Param('collectionId', ParseIntPipe) collectionId: number
+    ): Promise<void> {
+        await this.bookmarkService.deleteOne(user, collectionId);
     }
 }

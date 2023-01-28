@@ -39,4 +39,8 @@ export class BookmarkService {
             .take(options.take);
         return await new PageUtil<Bookmark>().getResponse(queryBuilder, options);
     }
+
+    async deleteOne(user: User, collectionId: number): Promise<void> {
+        await this.bookmarkRepository.delete({ userId: user.id, collectionId });
+    }
 }
