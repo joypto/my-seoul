@@ -1,7 +1,5 @@
-import { MiddlewareConsumer, NestModule, RequestMethod } from '@nestjs/common';
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule, RequestMethod } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { APP_PIPE } from '@nestjs/core';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AdminModule } from './api/admin/admin.module';
 import { AuthModule } from './api/auth/auth.module';
@@ -13,6 +11,7 @@ import { User } from './api/user/user.entity';
 import { UserModule } from './api/user/user.module';
 import { AppController } from './app.controller';
 import { LoggerMiddleware } from './middleware/logger.middleware';
+import { RedisModule } from './redis/redis.module';
 
 const ApiModules = [
     AuthModule,
@@ -41,6 +40,7 @@ const ApiModules = [
                 autoLoadEntities: true
             })
         }),
+        RedisModule,
         ...ApiModules
     ],
     controllers: [AppController]

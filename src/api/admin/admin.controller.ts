@@ -3,14 +3,17 @@ import {
     Delete,
     Param,
     ParseIntPipe,
+    Patch,
     UseGuards,
     UsePipes,
     ValidationPipe
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { AuthUser } from '../auth/authUser.decorator';
 import { CollectionService } from '../collection/collection.service';
 import { PlaceService } from '../place/place.service';
+import { User } from '../user/user.entity';
 import { Roles } from './role/role.decorator';
 import { Role } from './role/role.enum';
 import { RolesGuard } from './role/role.guard';
@@ -25,6 +28,12 @@ export class AdminController {
         private readonly collectionService: CollectionService,
         private readonly placeService: PlaceService
     ) {}
+
+    // @Patch('')
+    // @ApiOperation({ summary: '' })
+    // async updateRole(@AuthUser() user: User): Promise<User> {
+
+    // }
 
     @Delete('/collections/:collectionId')
     @Roles(Role.ADMIN)
