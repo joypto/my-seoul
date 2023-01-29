@@ -12,8 +12,12 @@ export class UserService {
     ) {}
 
     async create(user: User): Promise<void> {
-        if (await this.findOneByUsername(user.username))
+        if (await this.findOneByUsername(user.username)) {
             throw new ConflictException('Duplicate username');
+        }
+        if (await this.findOneByEmail(user.email)) {
+            throw new ConflictException('Duplication email');
+        }
         await this.userRepository.insert(user);
     }
 
@@ -23,6 +27,10 @@ export class UserService {
 
     async findOneByUsername(username: string): Promise<User> {
         return await this.userRepository.findOneBy({ username });
+    }
+
+    async findOneByEmail(email: string): Promise<User> {
+        return await this.userRepository.findOneBy({ email });
     }
 
     async findRolesCount(role: Role): Promise<number> {

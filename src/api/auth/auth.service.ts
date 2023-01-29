@@ -12,11 +12,16 @@ import { AuthRefreshDto } from './dto/refresh.dto';
 import { UpdatePasswordDto } from './dto/updatePassword.dto';
 import { Payload } from './types/payload.type';
 import { Token } from './types/token.type';
+import { AuthSignupDto } from './dto/signup.dto';
+import { Builder } from 'builder-pattern';
+import passwordGenerator from 'password-generator';
+import { SMTPService } from 'src/smtp/smtp.service';
 
 @Injectable()
 export class AuthService {
     constructor(
         private readonly configService: ConfigService,
+        private readonly smtpService: SMTPService,
         private readonly jwtService: JwtService,
         private readonly userService: UserService,
         @InjectRepository(User)
@@ -30,6 +35,10 @@ export class AuthService {
     private async hash<T>(data: T): Promise<string> {
         const salt = await bcrypt.genSalt();
         return await bcrypt.hash(data, salt);
+    }
+
+    private async generatePassword(): Promise<string> {
+        return passwordGenerator(8, false);
     }
 
     private async generateTokens(payload: Payload): Promise<Token> {
@@ -56,9 +65,11 @@ export class AuthService {
             .execute();
     }
 
-    async signUp(dto: AuthCredentialDto): Promise<void> {
+    async signUp(dto: AuthSignupDto): Promise<void> {
         const hashedPassword = await this.hash<string>(dto.password);
-        await this.userService.create(new User(dto.username, hashedPassword));
+        await this.userService.create(
+            Builder(User).username(dto.username).email(dto.email).password(hashedPassword).build()
+        );
     }
 
     async signIn(dto: AuthCredentialDto): Promise<Token> {
@@ -93,15 +104,31 @@ export class AuthService {
         throw new UnauthorizedException('Invalid refresh token');
     }
 
-    async updatePassword(user: User, dto: UpdatePasswordDto): Promise<void> {
-        const userFromDatabase = await this.userService.findOneByUsername(user.username);
-        if (!userFromDatabase) throw new BadRequestException('Invalid User');
-        if (!(await this.isValidHash(dto.oldPassword, userFromDatabase.password)))
+    async sendNewPassword(username: string): Promise<void> {
+        const user = await this.userService.findOneByUsername(username);
+        if (!user) throw new BadRequestException('Invalid User');
+
+        const newPassword = await this.generatePassword();
+        await this.smtpService.sendEmail(user.email, newPassword);
+
+        const hashedPassword = await this.hash<string>(newPassword);
+        user.password = hashedPassword;
+        user.refreshToken = null;
+        await this.userService.updateOne(user);
+    }
+
+    async updatePassword(username: string, dto: UpdatePasswordDto): Promise<void> {
+        const user = await this.userService.findOneByUsername(username);
+        if (!user) {
+            throw new BadRequestException('Invalid User');
+        }
+        if (!(await this.isValidHash(dto.oldPassword, user.password))) {
             throw new BadRequestException('Invalid password');
+        }
 
         const hashedPassword = await this.hash<string>(dto.newPassword);
-        userFromDatabase.password = hashedPassword;
-        userFromDatabase.refreshToken = null; // logout occurs with update password
-        await this.userService.updateOne(userFromDatabase);
+        user.password = hashedPassword;
+        user.refreshToken = null; // logout occurs with update password
+        await this.userService.updateOne(user);
     }
 }

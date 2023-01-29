@@ -13,6 +13,9 @@ export class User extends AbstractEntity {
     @Column({ unique: true })
     username: string;
 
+    @Column({ unique: true })
+    email: string;
+
     @Column()
     @Exclude()
     password: string;
@@ -34,10 +37,4 @@ export class User extends AbstractEntity {
     // user can bookmark collections
     @OneToMany(() => Bookmark, (bookmark) => bookmark.user, { eager: false, nullable: true })
     bookmarks: Bookmark[] | null;
-
-    constructor(username: string, password: string) {
-        super();
-        this.username = username;
-        this.password = password;
-    }
 }

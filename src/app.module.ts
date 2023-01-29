@@ -12,6 +12,7 @@ import { UserModule } from './api/user/user.module';
 import { AppController } from './app.controller';
 import { LoggerMiddleware } from './middleware/logger.middleware';
 import { RedisModule } from './redis/redis.module';
+import { SMTPModule } from './smtp/smtp.module';
 
 const ApiModules = [
     AuthModule,
@@ -41,6 +42,7 @@ const ApiModules = [
             })
         }),
         RedisModule,
+        SMTPModule,
         ...ApiModules
     ],
     controllers: [AppController]
