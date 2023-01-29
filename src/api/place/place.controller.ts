@@ -58,7 +58,7 @@ export class PlaceController {
         @Param('id', ParseIntPipe) id: number,
         @Body() dto: UpdatePlaceDto
     ): Promise<Place> {
-        return await this.placeService.updateOne(user, id, dto);
+        return await this.placeService.updateOneMine(user, id, dto);
     }
 
     @Delete('/:id')
@@ -67,6 +67,6 @@ export class PlaceController {
         @AuthUser() user: User,
         @Param('id', ParseIntPipe) id: number
     ): Promise<void> {
-        await this.placeService.deleteOne(user, id);
+        await this.placeService.deleteOneMine(user, id);
     }
 }

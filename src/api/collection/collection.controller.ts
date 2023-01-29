@@ -77,6 +77,6 @@ export class CollectionController {
         @AuthUser() user: User,
         @Param('id', ParseIntPipe) id: number
     ): Promise<void> {
-        await this.collectionService.deleteOne(user, id);
+        await this.collectionService.deleteOneByUserId(user, id);
     }
 }

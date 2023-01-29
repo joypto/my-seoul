@@ -11,14 +11,17 @@ export class Bookmark extends AbstractEntity {
     @Column({ select: false })
     userId: number; // for get userId without join
 
-    @ManyToOne(() => User, (user) => user.bookmarks, { eager: false })
+    @ManyToOne(() => User, (user) => user.bookmarks, { eager: false, onDelete: 'CASCADE' })
     @JoinColumn({ name: 'userId' })
     user: User;
 
     @Column({ select: false })
     collectionId: number; // for get collectionId without join
 
-    @ManyToOne(() => Collection, (collection) => collection.bookmarks, { eager: false })
+    @ManyToOne(() => Collection, (collection) => collection.bookmarks, {
+        eager: false,
+        onDelete: 'CASCADE'
+    })
     @JoinColumn({ name: 'collectionId' })
     collection: Collection;
 }

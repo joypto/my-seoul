@@ -3,6 +3,7 @@ import { Collection } from '../collection/collection.entity';
 import { Bookmark } from '../bookmark/bookmark.entity';
 import { AbstractEntity } from '../common/abstract.entity';
 import { Exclude } from 'class-transformer';
+import { Role } from '../admin/role/role.enum';
 
 @Entity()
 export class User extends AbstractEntity {
@@ -19,6 +20,9 @@ export class User extends AbstractEntity {
     @Column({ nullable: true })
     @Exclude()
     refreshToken?: string | null;
+
+    @Column('enum', { enum: Role, default: [Role.USER] })
+    roles: Role[];
 
     // user can write user's collections
     @OneToMany(() => Collection, (collection) => collection.author, {

@@ -55,7 +55,11 @@ export class CollectionService {
         return await this.collectionRepository.save(collection);
     }
 
-    async deleteOne(user: User, collectionId: number): Promise<void> {
+    async deleteOneById(collectionId: number): Promise<void> {
+        await this.collectionRepository.delete({ id: collectionId });
+    }
+
+    async deleteOneByUserId(user: User, collectionId: number): Promise<void> {
         await this.collectionRepository.delete({ id: collectionId, authorId: user.id });
     }
 }

@@ -3,6 +3,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { APP_PIPE } from '@nestjs/core';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { AdminModule } from './api/admin/admin.module';
 import { AuthModule } from './api/auth/auth.module';
 import { BookmarkModule } from './api/bookmark/bookmark.module';
 import { CollectionModule } from './api/collection/collection.module';
@@ -13,7 +14,14 @@ import { UserModule } from './api/user/user.module';
 import { AppController } from './app.controller';
 import { LoggerMiddleware } from './middleware/logger.middleware';
 
-const ApiModules = [AuthModule, UserModule, CollectionModule, PlaceModule, BookmarkModule];
+const ApiModules = [
+    AuthModule,
+    AdminModule,
+    UserModule,
+    CollectionModule,
+    PlaceModule,
+    BookmarkModule
+];
 
 @Module({
     imports: [

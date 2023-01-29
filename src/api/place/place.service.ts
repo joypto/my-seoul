@@ -44,7 +44,7 @@ export class PlaceService {
         });
     }
 
-    async updateOne(user: User, placeId: number, dto: UpdatePlaceDto): Promise<Place> {
+    async updateOneMine(user: User, placeId: number, dto: UpdatePlaceDto): Promise<Place> {
         const place = await this.findOneById(placeId);
         if (!place.collection.isAuthor(user.id)) throw new BadRequestException('Invalid author');
 
@@ -60,11 +60,13 @@ export class PlaceService {
         return await this.placeRepository.save(place);
     }
 
-    async deleteOne(user: User, placeId: number): Promise<void> {
-        const place = await this.findOneById(placeId);
-        const collection = place.collection;
-        if (!collection.isAuthor(user.id)) throw new BadRequestException('Invalid author');
-
+    async deleteOneById(placeId: number): Promise<void> {
         await this.placeRepository.delete({ id: placeId });
+    }
+
+    async deleteOneMine(user: User, placeId: number): Promise<void> {
+        const place = await this.findOneById(placeId);
+        if (!place.collection.isAuthor(user.id)) throw new BadRequestException('Invalid author');
+        await this.deleteOneById(placeId);
     }
 }
