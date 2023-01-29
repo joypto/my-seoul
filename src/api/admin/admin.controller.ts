@@ -1,9 +1,11 @@
 import {
+    Body,
     Controller,
     Delete,
     Param,
     ParseIntPipe,
     Patch,
+    Post,
     UseGuards,
     UsePipes,
     ValidationPipe
@@ -11,9 +13,12 @@ import {
 import { AuthGuard } from '@nestjs/passport';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AuthUser } from '../auth/authUser.decorator';
+import { UsernameDto } from '../auth/dto/username.dto';
 import { CollectionService } from '../collection/collection.service';
 import { PlaceService } from '../place/place.service';
 import { User } from '../user/user.entity';
+import { AdminService } from './admin.service';
+import { CodeDto } from './dto/code.dto';
 import { Roles } from './role/role.decorator';
 import { Role } from './role/role.enum';
 import { RolesGuard } from './role/role.guard';
@@ -25,15 +30,24 @@ import { RolesGuard } from './role/role.guard';
 @ApiBearerAuth('JWT')
 export class AdminController {
     constructor(
+        private readonly adminService: AdminService,
         private readonly collectionService: CollectionService,
         private readonly placeService: PlaceService
     ) {}
 
-    // @Patch('')
-    // @ApiOperation({ summary: '' })
-    // async updateRole(@AuthUser() user: User): Promise<User> {
+    @Post()
+    @Roles(Role.ADMIN)
+    @UseGuards(RolesGuard)
+    @ApiOperation({ summary: 'give permission to update admin role' })
+    async giveRole(@Body() dto: UsernameDto): Promise<void> {
+        await this.adminService.giveRole(dto.username);
+    }
 
-    // }
+    @Patch()
+    @ApiOperation({ summary: 'update to admin role' })
+    async takeRole(@AuthUser() user: User, @Body() dto: CodeDto): Promise<User> {
+        return await this.adminService.takeRole(user, dto.code);
+    }
 
     @Delete('/collections/:collectionId')
     @Roles(Role.ADMIN)

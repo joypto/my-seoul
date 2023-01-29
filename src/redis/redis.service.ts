@@ -22,15 +22,33 @@ export class RedisService {
         await this.redis.unlink(key);
     }
 
+    // Determine if a key exists
     async exists(key: RedisKey): Promise<number> {
         return await this.redis.exists(key);
     }
 
-    public async lpos(key: RedisKey, element: string): Promise<number> {
+    // Append one or multiple elements to a list (to first)
+    async lpush(key: RedisKey, element: string[]): Promise<number> {
+        return await this.redis.lpush(key, ...element);
+    }
+
+    // Append one or multiple elements to a list (to end)
+    async rpush(key: RedisKey, element: string[]): Promise<number> {
+        return await this.redis.rpush(key, ...element);
+    }
+
+    // Return the index of matching elements on a list
+    async lpos(key: RedisKey, element: string): Promise<number> {
         return await this.redis.lpos(key, element);
     }
 
-    public async lrem(key: RedisKey, count: number, data: string): Promise<void> {
-        await this.redis.lrem(key, count, data);
+    // Return the length of a list
+    async llen(key: RedisKey): Promise<number> {
+        return await this.redis.llen(key);
+    }
+
+    // Remove elements from a list
+    async lrem(key: RedisKey, count: number, data: string): Promise<number> {
+        return await this.redis.lrem(key, count, data);
     }
 }

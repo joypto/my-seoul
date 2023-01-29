@@ -1,8 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsString } from 'class-validator';
-import { AuthDto } from './basic.dto';
+import { UsernameDto } from './username.dto';
 
-export class AuthRefreshDto extends AuthDto {
+export class AuthRefreshDto extends UsernameDto {
     @IsString()
     @IsNotEmpty()
     @ApiProperty({ description: 'refresh token', type: String, required: true })

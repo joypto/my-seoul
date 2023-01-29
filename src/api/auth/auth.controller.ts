@@ -4,7 +4,7 @@ import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { User } from '../user/user.entity';
 import { AuthService } from './auth.service';
 import { AuthUser } from './authUser.decorator';
-import { AuthDto } from './dto/basic.dto';
+import { UsernameDto } from './dto/username.dto';
 import { AuthCredentialDto } from './dto/credential.dto';
 import { AuthRefreshDto } from './dto/refresh.dto';
 import { UpdatePasswordDto } from './dto/updatePassword.dto';
@@ -32,7 +32,7 @@ export class AuthController {
     @UseGuards(AuthGuard('jwt'))
     @ApiOperation({ summary: 'sign out' })
     @ApiBearerAuth('JWT')
-    async signOut(@Body() dto: AuthDto): Promise<void> {
+    async signOut(@Body() dto: UsernameDto): Promise<void> {
         await this.authService.signOut(dto);
     }
 

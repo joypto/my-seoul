@@ -52,7 +52,7 @@ export class PlaceController {
     }
 
     @Patch('/:id')
-    @ApiOperation({ summary: 'update collection' })
+    @ApiOperation({ summary: 'update my place' })
     async updateOneById(
         @AuthUser() user: User,
         @Param('id', ParseIntPipe) id: number,
@@ -62,7 +62,7 @@ export class PlaceController {
     }
 
     @Delete('/:id')
-    @ApiOperation({ summary: 'delete collection' })
+    @ApiOperation({ summary: 'delete my place' })
     async deleteOneById(
         @AuthUser() user: User,
         @Param('id', ParseIntPipe) id: number

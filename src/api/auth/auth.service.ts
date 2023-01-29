@@ -6,7 +6,7 @@ import * as bcrypt from 'bcryptjs';
 import { Repository } from 'typeorm';
 import { User } from '../user/user.entity';
 import { UserService } from '../user/user.service';
-import { AuthDto } from './dto/basic.dto';
+import { UsernameDto } from './dto/username.dto';
 import { AuthCredentialDto } from './dto/credential.dto';
 import { AuthRefreshDto } from './dto/refresh.dto';
 import { UpdatePasswordDto } from './dto/updatePassword.dto';
@@ -73,7 +73,7 @@ export class AuthService {
         throw new UnauthorizedException('Invalid credentials');
     }
 
-    async signOut(dto: AuthDto): Promise<void> {
+    async signOut(dto: UsernameDto): Promise<void> {
         const user = await this.userService.findOneByUsername(dto.username);
         if (user) await this.updateRefreshToken(dto.username, null);
     }
@@ -102,6 +102,6 @@ export class AuthService {
         const hashedPassword = await this.hash<string>(dto.newPassword);
         userFromDatabase.password = hashedPassword;
         userFromDatabase.refreshToken = null; // logout occurs with update password
-        await this.userService.updateUser(userFromDatabase);
+        await this.userService.updateOne(userFromDatabase);
     }
 }
