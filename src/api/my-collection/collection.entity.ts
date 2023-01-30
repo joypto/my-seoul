@@ -1,8 +1,8 @@
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { AbstractEntity } from '../common/abstract.entity';
-import { Place } from '../place/place.entity';
+import { Place } from '../my-place/place.entity';
 import { User } from '../user/user.entity';
-import { Bookmark } from '../bookmark/bookmark.entity';
+import { Bookmark } from '../my-bookmark/bookmark.entity';
 
 @Entity()
 export class Collection extends AbstractEntity {

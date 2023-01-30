@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { SMTPModule } from 'src/smtp/smtp.module';
-import { CollectionModule } from '../collection/collection.module';
-import { PlaceModule } from '../place/place.module';
+import { CollectionModule } from '../my-collection/collection.module';
+import { PlaceModule } from '../my-place/place.module';
 import { UserModule } from '../user/user.module';
 import { AdminController } from './admin.controller';
 import { AdminService } from './admin.service';

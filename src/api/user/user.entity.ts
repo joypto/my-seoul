@@ -1,6 +1,6 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
-import { Collection } from '../collection/collection.entity';
-import { Bookmark } from '../bookmark/bookmark.entity';
+import { Collection } from '../my-collection/collection.entity';
+import { Bookmark } from '../my-bookmark/bookmark.entity';
 import { AbstractEntity } from '../common/abstract.entity';
 import { Exclude } from 'class-transformer';
 import { Role } from '../admin/role/role.enum';

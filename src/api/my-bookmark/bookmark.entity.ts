@@ -1,5 +1,5 @@
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
-import { Collection } from '../collection/collection.entity';
+import { Collection } from '../my-collection/collection.entity';
 import { AbstractEntity } from '../common/abstract.entity';
 import { User } from '../user/user.entity';
 
