@@ -5,7 +5,7 @@ import { Injectable } from '@nestjs/common';
 export class SMTPService {
     constructor(private readonly mailerService: MailerService) {}
 
-    async sendAdminCode(to: string, adminCode: string): Promise<void> {
+    async sendAdminRoleCode(to: string, adminCode: string): Promise<void> {
         await this.mailerService.sendMail({
             from: 'from@example.com',
             to,
@@ -17,7 +17,19 @@ export class SMTPService {
         });
     }
 
-    async sendPassword(to: string, tempPassword: string): Promise<void> {
+    async sendEmailAuthenticateCode(to: string, authCode: string): Promise<void> {
+        await this.mailerService.sendMail({
+            from: 'from@example.com',
+            to,
+            subject: '[MY SEOUL]Authenticate Your Email',
+            template: 'auth-email',
+            context: {
+                authCode
+            }
+        });
+    }
+
+    async sendNewPassword(to: string, tempPassword: string): Promise<void> {
         await this.mailerService.sendMail({
             from: 'from@example.com',
             to,

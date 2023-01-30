@@ -1,0 +1,24 @@
+<html>
+    <head>
+        <meta charset='UTF-8' />
+        <title>Password Reset</title>
+        <style>
+            body { font-family: Arial, sans-serif; background-color: #f2f2f2; padding: 30px; }
+            .container { background-color: #ffffff; border: 1px solid #cccccc; border-radius: 10px;
+            padding: 30px; max-width: 500px; margin: 0 auto; } h1 { text-align: center; font-size:
+            24px; color: #444444; margin-bottom: 30px; } p { font-size: 16px; color: #777777;
+            margin-bottom: 30px; } .btn { background-color: #4CAF50; color: #ffffff; border-radius:
+            10px; padding: 15px; text-align: center; text-decoration: none; display: inline-block;
+            font-size: 16px; margin-bottom: 30px; }
+        </style>
+    </head>
+    <body>
+        <div class='container'>
+            <h1>Authenticate Your Email</h1>
+            <p>If you want to authenticate your email, please use the authenticate code below:</p>
+            <p><strong>Authenticate Code:</strong> {{authCode}}</p>
+            <p>If you did not make this request in 3 days, you can ignore this email and your email
+                will remain unauthenticated.</p>
+        </div>
+    </body>
+</html>

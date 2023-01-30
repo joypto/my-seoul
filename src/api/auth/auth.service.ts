@@ -1,22 +1,31 @@
-import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+    BadRequestException,
+    ConflictException,
+    Injectable,
+    UnauthorizedException
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcryptjs';
+import { Builder } from 'builder-pattern';
+import { ONE_DAY, ONE_HOUR } from 'src/constants/consts';
+import { EMAIL_AUTH_CODE, EMAIL_AUTH_STATUS } from 'src/redis/redis.key';
+import { RedisService } from 'src/redis/redis.service';
+import { SMTPService } from 'src/smtp/smtp.service';
+import { RandomUtil } from 'src/util/random.util';
 import { Repository } from 'typeorm';
 import { User } from '../user/user.entity';
 import { UserService } from '../user/user.service';
-import { UsernameDto } from './dto/username.dto';
-import { AuthCredentialDto } from './dto/credential.dto';
-import { AuthRefreshDto } from './dto/refresh.dto';
+import { CredentialDto } from './dto/credential.dto';
+import { EmailDto } from './dto/email.dto';
+import { EmailAuthDto } from './dto/emailAuth.dto';
+import { RefreshDto } from './dto/refresh.dto';
+import { SignupDto } from './dto/signup.dto';
 import { UpdatePasswordDto } from './dto/updatePassword.dto';
+import { UsernameDto } from './dto/username.dto';
 import { Payload } from './types/payload.type';
 import { Token } from './types/token.type';
-import { AuthSignupDto } from './dto/signup.dto';
-import { Builder } from 'builder-pattern';
-import passwordGenerator from 'password-generator';
-import { SMTPService } from 'src/smtp/smtp.service';
-import { RandomUtil } from 'src/util/random.util';
 
 @Injectable()
 export class AuthService {
@@ -25,12 +34,18 @@ export class AuthService {
         private readonly smtpService: SMTPService,
         private readonly jwtService: JwtService,
         private readonly userService: UserService,
+        private readonly redisService: RedisService,
         @InjectRepository(User)
         private readonly userRepository: Repository<User>
     ) {}
 
     private async isValidHash(requestedData: string, ownedData: string): Promise<boolean> {
         return await bcrypt.compare(requestedData, ownedData);
+    }
+
+    private async isEmailAuthenticated(email: string): Promise<boolean> {
+        const isEmailAuthed = await this.redisService.get(EMAIL_AUTH_STATUS(email));
+        return isEmailAuthed === 'auth';
     }
 
     private async hash<T>(data: T): Promise<string> {
@@ -62,14 +77,42 @@ export class AuthService {
             .execute();
     }
 
-    async signUp(dto: AuthSignupDto): Promise<void> {
+    async sendEmailAuthCode(dto: EmailDto): Promise<void> {
+        const user = await this.userService.findOneByEmail(dto.email);
+        if (user) throw new ConflictException('Email already exist');
+
+        const authCode = await new RandomUtil().generateRandomString();
+        await this.redisService.setex(EMAIL_AUTH_CODE(dto.email), 3 * ONE_DAY, authCode);
+        await this.smtpService.sendEmailAuthenticateCode(dto.email, authCode);
+    }
+
+    async matchEmailAuthCode(dto: EmailAuthDto): Promise<boolean> {
+        const authCode = await this.redisService.get(EMAIL_AUTH_CODE(dto.email));
+        if (authCode && dto.authCode === authCode) {
+            await this.redisService
+                .multi()
+                .setex(EMAIL_AUTH_STATUS(dto.email), ONE_HOUR, 'auth')
+                .unlink(EMAIL_AUTH_CODE(dto.email))
+                .exec();
+            return true;
+        }
+        return false;
+    }
+
+    async signUp(dto: SignupDto): Promise<void> {
+        if (!(await this.isEmailAuthenticated(dto.email))) {
+            throw new BadRequestException('Email not authenticated');
+        }
+
         const hashedPassword = await this.hash<string>(dto.password);
         await this.userService.create(
             Builder(User).username(dto.username).email(dto.email).password(hashedPassword).build()
         );
+
+        await this.redisService.unlink(EMAIL_AUTH_STATUS(dto.email));
     }
 
-    async signIn(dto: AuthCredentialDto): Promise<Token> {
+    async signIn(dto: CredentialDto): Promise<Token> {
         const user = await this.userService.findOneByUsername(dto.username);
 
         if (user && (await this.isValidHash(dto.password, user.password))) {
@@ -86,7 +129,7 @@ export class AuthService {
         if (user) await this.updateRefreshToken(dto.username, null);
     }
 
-    async refresh(dto: AuthRefreshDto): Promise<Token> {
+    async refresh(dto: RefreshDto): Promise<Token> {
         const user = await this.userService.findOneByUsername(dto.username);
         if (
             user &&
@@ -106,7 +149,7 @@ export class AuthService {
         if (!user) throw new BadRequestException('Invalid User');
 
         const newPassword = await new RandomUtil().generateRandomString();
-        await this.smtpService.sendPassword(user.email, newPassword);
+        await this.smtpService.sendNewPassword(user.email, newPassword);
 
         const hashedPassword = await this.hash<string>(newPassword);
         user.password = hashedPassword;

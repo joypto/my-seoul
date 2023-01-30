@@ -1,11 +1,6 @@
-import {
-    ForbiddenException,
-    Injectable,
-    NotFoundException,
-    ServiceUnavailableException
-} from '@nestjs/common';
+import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { ONE_DAY, ONE_WEEK } from 'src/constants/consts';
+import { ONE_DAY } from 'src/constants/consts';
 import { ADMIN_CODE, ADMIN_USERNAMES } from 'src/redis/redis.key';
 import { RedisService } from 'src/redis/redis.service';
 import { SMTPService } from 'src/smtp/smtp.service';
@@ -39,7 +34,7 @@ export class AdminService {
         await this.redisService.rpush(ADMIN_USERNAMES, [username]);
 
         const code = await new RandomUtil().generateRandomString();
-        await this.stmpService.sendAdminCode(user.email, code);
+        await this.stmpService.sendAdminRoleCode(user.email, code);
         await this.redisService.setex(ADMIN_CODE(username), 3 * ONE_DAY, code);
     }
 

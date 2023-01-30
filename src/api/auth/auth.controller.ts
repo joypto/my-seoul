@@ -15,9 +15,11 @@ import { User } from '../user/user.entity';
 import { UserService } from '../user/user.service';
 import { AuthService } from './auth.service';
 import { AuthUser } from './authUser.decorator';
-import { AuthCredentialDto } from './dto/credential.dto';
-import { AuthRefreshDto } from './dto/refresh.dto';
-import { AuthSignupDto } from './dto/signup.dto';
+import { CredentialDto } from './dto/credential.dto';
+import { EmailDto } from './dto/email.dto';
+import { EmailAuthDto } from './dto/emailAuth.dto';
+import { RefreshDto } from './dto/refresh.dto';
+import { SignupDto } from './dto/signup.dto';
 import { UpdatePasswordDto } from './dto/updatePassword.dto';
 import { UsernameDto } from './dto/username.dto';
 import { Token } from './types/token.type';
@@ -31,15 +33,27 @@ export class AuthController {
         private readonly userService: UserService
     ) {}
 
+    @Post('/email/auth-code')
+    @ApiOperation({ summary: 'send code for authenticate email' })
+    async sendEmailAuthCode(@Body() dto: EmailDto): Promise<void> {
+        await this.authService.sendEmailAuthCode(dto);
+    }
+
+    @Post('/email')
+    @ApiOperation({ summary: 'match code for authenticate email' })
+    async matchEmailAuthCode(@Body() dto: EmailAuthDto): Promise<boolean> {
+        return await this.authService.matchEmailAuthCode(dto);
+    }
+
     @Post('/signup')
     @ApiOperation({ summary: 'sign up' })
-    async signUp(@Body() dto: AuthSignupDto): Promise<void> {
+    async signUp(@Body() dto: SignupDto): Promise<void> {
         await this.authService.signUp(dto);
     }
 
     @Post('/signin')
     @ApiOperation({ summary: 'sign in' })
-    async signIn(@Body() dto: AuthCredentialDto): Promise<Token> {
+    async signIn(@Body() dto: CredentialDto): Promise<Token> {
         return await this.authService.signIn(dto);
     }
 
@@ -55,7 +69,7 @@ export class AuthController {
     @UseGuards(AuthGuard('jwt-refresh'))
     @ApiOperation({ summary: 'generate tokens by refresh token' })
     @ApiBearerAuth('JWT')
-    async refresh(@Body() dto: AuthRefreshDto): Promise<Token> {
+    async refresh(@Body() dto: RefreshDto): Promise<Token> {
         return await this.authService.refresh(dto);
     }
 

@@ -15,9 +15,6 @@ export class UserService {
         if (await this.findOneByUsername(user.username)) {
             throw new ConflictException('Duplicate username');
         }
-        if (await this.findOneByEmail(user.email)) {
-            throw new ConflictException('Duplication email');
-        }
         await this.userRepository.insert(user);
     }
 
