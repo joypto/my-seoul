@@ -13,14 +13,16 @@ import { AppController } from './app.controller';
 import { LoggerMiddleware } from './middleware/logger.middleware';
 import { RedisModule } from './redis/redis.module';
 import { SMTPModule } from './smtp/smtp.module';
+import { StoreModule } from './api/store/store.module';
 
 const ApiModules = [
     AuthModule,
     AdminModule,
     UserModule,
+    BookmarkModule,
     CollectionModule,
     PlaceModule,
-    BookmarkModule
+    StoreModule
 ];
 
 @Module({

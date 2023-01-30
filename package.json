@@ -25,6 +25,7 @@
         "@nestjs/swagger": "^6.1.4",
         "@nestjs/typeorm": "^9.0.1",
         "argon2": "^0.30.3",
+        "axios": "^1.2.6",
         "bcryptjs": "^2.4.3",
         "builder-pattern": "^2.2.0",
         "class-transformer": "^0.5.1",
