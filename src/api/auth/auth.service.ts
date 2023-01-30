@@ -16,6 +16,7 @@ import { AuthSignupDto } from './dto/signup.dto';
 import { Builder } from 'builder-pattern';
 import passwordGenerator from 'password-generator';
 import { SMTPService } from 'src/smtp/smtp.service';
+import { RandomUtil } from 'src/util/random.util';
 
 @Injectable()
 export class AuthService {
@@ -35,10 +36,6 @@ export class AuthService {
     private async hash<T>(data: T): Promise<string> {
         const salt = await bcrypt.genSalt();
         return await bcrypt.hash(data, salt);
-    }
-
-    private async generatePassword(): Promise<string> {
-        return passwordGenerator(8, false);
     }
 
     private async generateTokens(payload: Payload): Promise<Token> {
@@ -108,8 +105,8 @@ export class AuthService {
         const user = await this.userService.findOneByUsername(username);
         if (!user) throw new BadRequestException('Invalid User');
 
-        const newPassword = await this.generatePassword();
-        await this.smtpService.sendEmail(user.email, newPassword);
+        const newPassword = await new RandomUtil().generateRandomString();
+        await this.smtpService.sendPassword(user.email, newPassword);
 
         const hashedPassword = await this.hash<string>(newPassword);
         user.password = hashedPassword;

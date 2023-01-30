@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+import { SMTPModule } from 'src/smtp/smtp.module';
 import { CollectionModule } from '../collection/collection.module';
 import { PlaceModule } from '../place/place.module';
 import { UserModule } from '../user/user.module';
@@ -8,7 +9,7 @@ import { AdminService } from './admin.service';
 import { RolesGuard } from './role/role.guard';
 
 @Module({
-    imports: [ConfigModule, UserModule, CollectionModule, PlaceModule],
+    imports: [ConfigModule, SMTPModule, UserModule, CollectionModule, PlaceModule],
     controllers: [AdminController],
     providers: [
         AdminService,
