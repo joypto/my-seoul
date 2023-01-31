@@ -1,14 +1,9 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
+import { Builder } from 'builder-pattern';
 import { Type } from 'class-transformer';
-import { IsEnum, IsInt, IsOptional, Max, Min } from 'class-validator';
-import { Order } from 'src/constants/consts';
+import { IsInt, IsOptional, Max, Min } from 'class-validator';
 
 export class PageOption {
-    @IsEnum(Order)
-    @IsOptional()
-    @ApiPropertyOptional({ enum: Order, default: Order.ASC })
-    readonly order?: Order = Order.ASC;
-
     @IsInt()
     @Type(() => Number)
     @IsOptional()
@@ -26,5 +21,9 @@ export class PageOption {
 
     get skip(): number {
         return (this.page - 1) * this.take;
+    }
+
+    get pageOptions(): PageOption {
+        return Builder(PageOption).page(this.page).take(this.take).build();
     }
 }

@@ -8,8 +8,4 @@ export class ReadBookmarkCollectionDto extends PageOption {
     @IsNotEmpty()
     @ApiProperty({ description: 'userId', type: Number })
     userId: number | undefined;
-
-    get pageOptions(): PageOption {
-        return Builder(PageOption).order(this.order).page(this.page).take(this.take).build();
-    }
 }

@@ -5,7 +5,7 @@ import { CreateDateColumn, UpdateDateColumn } from 'typeorm';
 export abstract class AbstractEntity {
     @CreateDateColumn({ select: false })
     @Exclude()
-    createAt: Date;
+    createdAt: Date;
 
     @UpdateDateColumn({ select: false })
     @Exclude()

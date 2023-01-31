@@ -15,14 +15,14 @@ import {
 import { AuthGuard } from '@nestjs/passport';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AuthUser } from '../auth/authUser.decorator';
-import { PageOption } from '../common/page/option.dto';
 import { Page } from '../common/page/page.dto';
+import { SearchOption } from '../common/search/option.dto';
 import { User } from '../user/user.entity';
 import { Collection } from './collection.entity';
 import { CollectionService } from './collection.service';
-import { UpdateCollectionDto } from './dto/updateCollection.dto';
-import { ReadCollectionDto } from './dto/readCollection.dto';
 import { CreateCollectionDto } from './dto/createCollection.dto';
+import { ReadCollectionDto } from './dto/readCollection.dto';
+import { UpdateCollectionDto } from './dto/updateCollection.dto';
 
 @Controller('collections')
 @UsePipes(ValidationPipe)
@@ -41,18 +41,19 @@ export class CollectionController {
     @Get()
     @ApiOperation({ summary: 'get collections' })
     async get(@Query() dto: ReadCollectionDto): Promise<Page<Collection>> {
+        console.log(dto);
         if (dto.authorId)
-            return await this.collectionService.findByUserId(dto.authorId, dto.pageOptions);
-        return await this.collectionService.findAll(dto.pageOptions);
+            return await this.collectionService.findByUserId(dto.authorId, dto.serachOptions);
+        return await this.collectionService.findAll(dto.serachOptions);
     }
 
     @Get('/me')
     @ApiOperation({ summary: 'get collections created by me' })
     async getMine(
         @AuthUser() user: User,
-        @Query() pageOptions: PageOption
+        @Query() options: SearchOption
     ): Promise<Page<Collection>> {
-        return await this.collectionService.findByUserId(user.id, pageOptions);
+        return await this.collectionService.findByUserId(user.id, options);
     }
 
     @Get('/:id')

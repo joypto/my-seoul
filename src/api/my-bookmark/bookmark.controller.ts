@@ -20,7 +20,7 @@ import { CreateBookmarkDto } from './dto/createBookmark.dto';
 import { ReadBookmarkCollectionDto } from './dto/readBookmarkUser.dto';
 import { Bookmark } from './bookmark.entity';
 import { BookmarkService } from './bookmark.service';
-import { ReadBookmarkUserDto } from './dto/readBookmarkCollection.dto copy';
+import { ReadBookmarkUserDto } from './dto/readBookmarkCollection.dto';
 
 @Controller('bookmarks')
 @UsePipes(ValidationPipe)
