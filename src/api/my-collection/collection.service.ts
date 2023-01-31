@@ -1,8 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PageUtil } from 'src/util/page.util';
-import { Repository, SelectQueryBuilder } from 'typeorm';
-import { PageOption } from '../common/page/option.dto';
+import { Repository } from 'typeorm';
 import { Page } from '../common/page/page.dto';
 import { SearchOption } from '../common/search/option.dto';
 import { Order } from '../common/search/search.type';
