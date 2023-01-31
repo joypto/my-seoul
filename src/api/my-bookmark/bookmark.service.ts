@@ -1,4 +1,9 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import {
+    BadRequestException,
+    ConflictException,
+    Injectable,
+    NotFoundException
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Builder } from 'builder-pattern';
 import { PageUtil } from 'src/util/page.util';
@@ -66,6 +71,30 @@ export class BookmarkService {
     }
 
     async deleteOne(user: User, collectionId: number): Promise<void> {
-        await this.bookmarkRepository.delete({ userId: user.id, collectionId });
+        const queryRunner = this.dataSource.createQueryRunner();
+        await queryRunner.connect();
+        try {
+            await queryRunner.startTransaction();
+            // delete bookmark
+            const { affected } = await queryRunner.manager.delete(
+                Bookmark,
+                Builder(Bookmark).userId(user.id).collectionId(collectionId).build()
+            );
+            if (affected === 0) throw new NotFoundException('Bookmark Not found');
+            // decrease bookmark count
+            queryRunner.manager
+                .createQueryBuilder()
+                .update(Collection)
+                .where('id = :collectionId', { collectionId: collectionId })
+                .set({ bookmarkCount: () => 'bookmarkCount - 1' })
+                .execute();
+
+            await queryRunner.commitTransaction();
+        } catch (err) {
+            await queryRunner.rollbackTransaction();
+            throw err;
+        } finally {
+            await queryRunner.release();
+        }
     }
 }
