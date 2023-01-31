@@ -28,6 +28,9 @@ export class Collection extends AbstractEntity {
     @OneToMany(() => Bookmark, (bookmark) => bookmark.user, { eager: false, nullable: true })
     bookmarks: Bookmark[] | null;
 
+    @Column({ default: 0 })
+    bookmarkCount: number; // for better performance when querying bookmark count
+
     isAuthor(userId: number): boolean {
         return userId === this.authorId;
     }

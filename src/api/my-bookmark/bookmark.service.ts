@@ -1,23 +1,48 @@
-import { Injectable } from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Builder } from 'builder-pattern';
 import { PageUtil } from 'src/util/page.util';
-import { Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { PageOption } from '../common/page/option.dto';
 import { Page } from '../common/page/page.dto';
+import { Collection } from '../my-collection/collection.entity';
 import { User } from '../user/user.entity';
-import { CreateBookmarkDto } from './dto/createBookmark.dto';
 import { Bookmark } from './bookmark.entity';
+import { CreateBookmarkDto } from './dto/createBookmark.dto';
 
 @Injectable()
 export class BookmarkService {
     constructor(
+        private readonly dataSource: DataSource,
         @InjectRepository(Bookmark)
         private readonly bookmarkRepository: Repository<Bookmark>
     ) {}
 
     async create(user: User, dto: CreateBookmarkDto): Promise<void> {
-        const bookmark = this.bookmarkRepository.create({ userId: user.id, ...dto });
-        await this.bookmarkRepository.save(bookmark);
+        const queryRunner = this.dataSource.createQueryRunner();
+        await queryRunner.connect();
+        try {
+            await queryRunner.startTransaction();
+            // save bookmark
+            await queryRunner.manager.save(
+                Bookmark,
+                Builder(Bookmark).userId(user.id).collectionId(dto.collectionId).build()
+            );
+            // increase bookmark count
+            queryRunner.manager
+                .createQueryBuilder()
+                .update(Collection)
+                .where('id = :collectionId', { collectionId: dto.collectionId })
+                .set({ bookmarkCount: () => 'bookmarkCount + 1' })
+                .execute();
+
+            await queryRunner.commitTransaction();
+        } catch (err) {
+            await queryRunner.rollbackTransaction();
+            throw new ConflictException('Duplicate bookmark');
+        } finally {
+            await queryRunner.release();
+        }
     }
 
     async findCollections(userId: number, options: PageOption): Promise<Page<Bookmark>> {
