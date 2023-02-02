@@ -1,11 +1,11 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PageUtil } from 'src/util/page.util';
-import { Repository } from 'typeorm';
+import { Brackets, Repository } from 'typeorm';
 import { Page } from '../common/page/page.dto';
 import { SearchCollectionOption } from './dto/searchCollection.dto';
 import { Order } from '../common/search/search.type';
-import { SortAscending, SortBy } from '../common/search/sort.enum';
+import { SortAscending, CollectionSortBy } from '../common/search/sort.enum';
 import { User } from '../user/user.entity';
 import { Collection } from './collection.entity';
 import { UpdateCollectionDto } from './dto/updateCollection.dto';
@@ -19,18 +19,18 @@ export class CollectionService {
 
     private getSortElement(
         sortAscending: SortAscending,
-        sortBy: SortBy
+        sortBy: CollectionSortBy
     ): { order: Order; column: string } {
         const order = sortAscending === SortAscending.ASC ? 'ASC' : 'DESC';
         let column: string;
         switch (sortBy) {
-            case SortBy.NAME:
+            case CollectionSortBy.NAME:
                 column = 'name';
                 break;
-            case SortBy.CREATED_DATE:
+            case CollectionSortBy.CREATED_DATE:
                 column = 'createdAt';
                 break;
-            case SortBy.BOOKMARK_COUNT:
+            case CollectionSortBy.BOOKMARK_COUNT:
                 column = 'bookmarkCount';
         }
         return { order, column };
@@ -42,16 +42,20 @@ export class CollectionService {
         return collection;
     }
 
+    // prettier-ignore
     async findAll(options: SearchCollectionOption): Promise<Page<Collection>> {
         const { order, column } = this.getSortElement(options.sortAscending, options.sortBy);
         const queryBuilder = this.collectionRepository
             .createQueryBuilder('collection')
+            .where('name like :keyword', { keyword: `%${options.keyword ? options.keyword : ''}%` })
+            .orWhere('description like :keyword', { keyword: `%${options.keyword ? options.keyword : ''}%` })
             .orderBy(column, order)
             .skip(options.skip)
             .take(options.take);
         return await new PageUtil<Collection>().getResponse(queryBuilder, options);
     }
 
+    // prettier-ignore
     async findByUserId(
         authorId: number,
         options: SearchCollectionOption
@@ -60,6 +64,12 @@ export class CollectionService {
         const queryBuilder = this.collectionRepository
             .createQueryBuilder('collection')
             .where('authorId = :authorId', { authorId })
+            .andWhere(
+                new Brackets((qb) => {
+                    qb.where('name like :keyword', { keyword: `%${options.keyword ? options.keyword : ''}%` })
+                        .orWhere('description like :keyword', { keyword: `%${options.keyword? options.keyword : ''}%` });
+                })
+            )
             .orderBy(column, order)
             .skip(options.skip)
             .take(options.take);

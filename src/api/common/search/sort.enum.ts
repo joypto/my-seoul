@@ -3,7 +3,7 @@ export enum SortAscending {
     DESC = 'DESC'
 }
 
-export enum SortBy {
+export enum CollectionSortBy {
     CREATED_DATE = 'CREATED_DATE',
     NAME = 'NAME',
     BOOKMARK_COUNT = 'BOOKMARK_COUNT'
