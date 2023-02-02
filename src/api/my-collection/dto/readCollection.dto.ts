@@ -1,8 +1,8 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { IsNumber, IsOptional } from 'class-validator';
-import { SearchOption } from 'src/api/common/search/option.dto';
+import { SearchCollectionOption } from 'src/api/my-collection/dto/searchCollection.dto';
 
-export class ReadCollectionDto extends SearchOption {
+export class ReadCollectionDto extends SearchCollectionOption {
     @IsNumber()
     @IsOptional()
     @ApiPropertyOptional({ description: 'authorId', type: Number })

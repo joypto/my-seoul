@@ -1,7 +1,6 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { IsNumber, IsOptional } from 'class-validator';
 import { PageOption } from 'src/api/common/page/option.dto';
-import { SearchOption } from 'src/api/common/search/option.dto';
 
 export class ReadPlaceDto extends PageOption {
     @IsNumber()

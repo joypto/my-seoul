@@ -16,7 +16,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AuthUser } from '../auth/authUser.decorator';
 import { Page } from '../common/page/page.dto';
-import { SearchOption } from '../common/search/option.dto';
+import { SearchCollectionOption } from './dto/searchCollection.dto';
 import { User } from '../user/user.entity';
 import { Collection } from './collection.entity';
 import { CollectionService } from './collection.service';
@@ -51,7 +51,7 @@ export class CollectionController {
     @ApiOperation({ summary: 'get collections created by me' })
     async getMine(
         @AuthUser() user: User,
-        @Query() options: SearchOption
+        @Query() options: SearchCollectionOption
     ): Promise<Page<Collection>> {
         return await this.collectionService.findByUserId(user.id, options);
     }
