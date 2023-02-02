@@ -1,9 +1,4 @@
-import {
-    BadRequestException,
-    ConflictException,
-    Injectable,
-    NotFoundException
-} from '@nestjs/common';
+import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Builder } from 'builder-pattern';
 import { PageUtil } from 'src/util/page.util';
@@ -40,7 +35,6 @@ export class BookmarkService {
                 .where('id = :collectionId', { collectionId: dto.collectionId })
                 .set({ bookmarkCount: () => 'bookmarkCount + 1' })
                 .execute();
-
             await queryRunner.commitTransaction();
         } catch (err) {
             await queryRunner.rollbackTransaction();
@@ -88,7 +82,6 @@ export class BookmarkService {
                 .where('id = :collectionId', { collectionId: collectionId })
                 .set({ bookmarkCount: () => 'bookmarkCount - 1' })
                 .execute();
-
             await queryRunner.commitTransaction();
         } catch (err) {
             await queryRunner.rollbackTransaction();

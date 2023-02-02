@@ -30,6 +30,8 @@ export class CollectionService {
             case SortBy.CREATED_DATE:
                 column = 'createdAt';
                 break;
+            case SortBy.BOOKMARK_COUNT:
+                column = 'bookmarkCount';
         }
         return { order, column };
     }

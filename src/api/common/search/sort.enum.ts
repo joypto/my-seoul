@@ -5,5 +5,6 @@ export enum SortAscending {
 
 export enum SortBy {
     CREATED_DATE = 'CREATED_DATE',
-    NAME = 'NAME'
+    NAME = 'NAME',
+    BOOKMARK_COUNT = 'BOOKMARK_COUNT'
 }
