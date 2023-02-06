@@ -17,13 +17,15 @@ import { RandomUtil } from 'src/util/random.util';
 import { Repository } from 'typeorm';
 import { User } from '../user/user.entity';
 import { UserService } from '../user/user.service';
-import { CredentialDto } from './dto/credential.dto';
-import { EmailDto } from './dto/email.dto';
-import { EmailAuthDto } from './dto/emailAuth.dto';
-import { RefreshDto } from './dto/refresh.dto';
-import { SignupDto } from './dto/signup.dto';
-import { UpdatePasswordDto } from './dto/updatePassword.dto';
-import { UsernameDto } from './dto/username.dto';
+import {
+    EmailDto,
+    EmailAuthDto,
+    SignupDto,
+    CredentialDto,
+    UsernameDto,
+    RefreshDto,
+    UpdatePasswordDto
+} from './dto/auth.dto';
 import { Payload } from './types/payload.type';
 import { Token } from './types/token.type';
 

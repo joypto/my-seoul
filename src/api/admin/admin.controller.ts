@@ -13,7 +13,7 @@ import {
 import { AuthGuard } from '@nestjs/passport';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AuthUser } from '../auth/authUser.decorator';
-import { UsernameDto } from '../auth/dto/username.dto';
+import { UsernameDto } from '../auth/dto/auth.dto';
 import { CollectionService } from '../my-collection/collection.service';
 import { PlaceService } from '../my-place/place.service';
 import { User } from '../user/user.entity';

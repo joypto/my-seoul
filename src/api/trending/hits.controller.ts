@@ -7,4 +7,6 @@ import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 @UseGuards(AuthGuard('jwt'))
 @ApiTags('Collection')
 @ApiBearerAuth('JWT')
-export class HitsController {}
+export class HitsController {
+    constructor() {}
+}
