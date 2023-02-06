@@ -29,7 +29,7 @@ export class BookmarkService {
                 Builder(Bookmark).userId(user.id).collectionId(dto.collectionId).build()
             );
             // increase bookmark count
-            queryRunner.manager
+            await queryRunner.manager
                 .createQueryBuilder()
                 .update(Collection)
                 .where('id = :collectionId', { collectionId: dto.collectionId })
@@ -76,7 +76,7 @@ export class BookmarkService {
             );
             if (affected === 0) throw new NotFoundException('Bookmark Not found');
             // decrease bookmark count
-            queryRunner.manager
+            await queryRunner.manager
                 .createQueryBuilder()
                 .update(Collection)
                 .where('id = :collectionId', { collectionId: collectionId })

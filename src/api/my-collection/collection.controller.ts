@@ -23,6 +23,7 @@ import { CollectionService } from './collection.service';
 import { CreateCollectionDto } from './dto/createCollection.dto';
 import { ReadCollectionDto } from './dto/readCollection.dto';
 import { UpdateCollectionDto } from './dto/updateCollection.dto';
+import { HitsService } from '../trending/hits.service';
 
 @Controller('collections')
 @UsePipes(ValidationPipe)
@@ -30,7 +31,10 @@ import { UpdateCollectionDto } from './dto/updateCollection.dto';
 @ApiTags('Collection')
 @ApiBearerAuth('JWT')
 export class CollectionController {
-    constructor(private readonly collectionService: CollectionService) {}
+    constructor(
+        private readonly collectionService: CollectionService,
+        private readonly hitsService: HitsService
+    ) {}
 
     @Post()
     @ApiOperation({ summary: 'create collection' })
@@ -41,7 +45,6 @@ export class CollectionController {
     @Get()
     @ApiOperation({ summary: 'get collections' })
     async get(@Query() dto: ReadCollectionDto): Promise<Page<Collection>> {
-        console.log(dto);
         if (dto.authorId)
             return await this.collectionService.findByUserId(dto.authorId, dto.serachOptions);
         return await this.collectionService.findAll(dto.serachOptions);
@@ -58,7 +61,11 @@ export class CollectionController {
 
     @Get('/:id')
     @ApiOperation({ summary: 'get collection by id' })
-    async getOneById(@Param('id', ParseIntPipe) id: number): Promise<Collection> {
+    async getOneById(
+        @AuthUser() user: User,
+        @Param('id', ParseIntPipe) id: number
+    ): Promise<Collection> {
+        await this.hitsService.hits(user, id);
         return await this.collectionService.findOneById(id);
     }
 

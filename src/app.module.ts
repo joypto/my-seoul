@@ -14,14 +14,19 @@ import { LoggerMiddleware } from './middleware/logger.middleware';
 import { RedisModule } from './redis/redis.module';
 import { SMTPModule } from './smtp/smtp.module';
 import { StoreModule } from './api/store/store.module';
+import { HitsModule } from './api/trending/hits.module';
+import { Collection } from './api/my-collection/collection.entity';
+import { Bookmark } from './api/my-bookmark/bookmark.entity';
+import { Hits } from './api/trending/hits.entity';
 
 const ApiModules = [
     AuthModule,
     AdminModule,
     UserModule,
-    BookmarkModule,
     CollectionModule,
     PlaceModule,
+    BookmarkModule,
+    HitsModule,
     StoreModule
 ];
 
@@ -39,7 +44,7 @@ const ApiModules = [
                 // password: cs.get('DB_PASSWORD'),
                 database: cs.get('DB_NAME'),
                 synchronize: true,
-                entities: [User, Place],
+                entities: [User, Collection, Place, Bookmark, Hits],
                 autoLoadEntities: true
             })
         }),

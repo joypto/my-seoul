@@ -31,6 +31,9 @@ export class Collection extends AbstractEntity {
     @Column({ default: 0 })
     bookmarkCount: number; // for better performance when querying bookmark count
 
+    @Column({ default: 0 })
+    hitCount: number;
+
     isAuthor(userId: number): boolean {
         return userId === this.authorId;
     }

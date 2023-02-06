@@ -14,7 +14,7 @@ export class RedisService {
         return await this.redis.get(key);
     }
 
-    async setex(key: RedisKey, expire: number, value: string) {
+    async setex<T extends string | number>(key: RedisKey, expire: number, value: T) {
         await this.redis.setex(key, expire, value);
     }
 
@@ -50,5 +50,17 @@ export class RedisService {
     // Remove elements from a list
     async lrem(key: RedisKey, count: number, data: string): Promise<number> {
         return await this.redis.lrem(key, count, data);
+    }
+
+    async zscore(key: RedisKey, member: string): Promise<string> {
+        return await this.redis.zscore(key, member);
+    }
+
+    async zrevrange(key: RedisKey, start: number, end: number, option: any): Promise<string[]> {
+        return await this.redis.zrevrange(key, start, end, option);
+    }
+
+    async zincrby(key: RedisKey, increment: number, member: string): Promise<string> {
+        return await this.redis.zincrby(key, increment, member);
     }
 }
