@@ -40,4 +40,13 @@ export class UserService {
     async updateOne(user: User): Promise<User> {
         return await this.userRepository.save(user);
     }
+
+    async updateRefreshTokenByUsername(username: string, refreshToken: string): Promise<void> {
+        await this.userRepository
+            .createQueryBuilder()
+            .update(User)
+            .where('username = :username', { username })
+            .set({ refreshToken })
+            .execute();
+    }
 }

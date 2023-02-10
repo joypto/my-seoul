@@ -28,19 +28,4 @@ export class Place extends AbstractEntity {
     @ManyToOne(() => Collection, (collection) => collection.places, { eager: false })
     @JoinColumn({ name: 'collectionId' })
     collection: Collection;
-
-    constructor(
-        name: string,
-        description: string,
-        latitude: number,
-        longitude: number,
-        collection: Collection
-    ) {
-        super();
-        this.name = name;
-        this.description = description;
-        this.latitude = latitude;
-        this.longitude = longitude;
-        this.collection = collection;
-    }
 }

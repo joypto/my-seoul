@@ -6,7 +6,6 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
-import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcryptjs';
 import { Builder } from 'builder-pattern';
 import { ONE_DAY, ONE_HOUR } from 'src/constants/consts';
@@ -14,17 +13,16 @@ import { EMAIL_AUTH_CODE, EMAIL_AUTH_STATUS } from 'src/redis/redis.key';
 import { RedisService } from 'src/redis/redis.service';
 import { SMTPService } from 'src/smtp/smtp.service';
 import { RandomUtil } from 'src/util/random.util';
-import { Repository } from 'typeorm';
 import { User } from '../user/user.entity';
 import { UserService } from '../user/user.service';
 import {
-    EmailDto,
-    EmailAuthDto,
-    SignupDto,
     CredentialDto,
-    UsernameDto,
+    EmailAuthDto,
+    EmailDto,
     RefreshDto,
-    UpdatePasswordDto
+    SignupDto,
+    UpdatePasswordDto,
+    UsernameDto
 } from './dto/auth.dto';
 import { Payload } from './types/payload.type';
 import { Token } from './types/token.type';
@@ -36,9 +34,7 @@ export class AuthService {
         private readonly smtpService: SMTPService,
         private readonly jwtService: JwtService,
         private readonly userService: UserService,
-        private readonly redisService: RedisService,
-        @InjectRepository(User)
-        private readonly userRepository: Repository<User>
+        private readonly redisService: RedisService
     ) {}
 
     private async isValidHash(requestedData: string, ownedData: string): Promise<boolean> {
@@ -71,12 +67,7 @@ export class AuthService {
         if (refreshToken) {
             refreshToken = await this.hash<string>(refreshToken);
         }
-        await this.userRepository
-            .createQueryBuilder()
-            .update(User)
-            .where('username = :username', { username })
-            .set({ refreshToken })
-            .execute();
+        await this.userService.updateRefreshTokenByUsername(username, refreshToken);
     }
 
     async sendEmailAuthCode(dto: EmailDto): Promise<void> {
