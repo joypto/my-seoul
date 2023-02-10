@@ -41,7 +41,7 @@ export class AdminService {
     async takeRole(user: User, code: string): Promise<User> {
         const count = await this.userService.findRolesCount(Role.ADMIN);
         if (count !== 0) {
-            // first admin exist
+            // first admin exists
             if (!(await this.isValidUsername(user.username))) {
                 throw new ForbiddenException('Invalid username');
             }

@@ -90,7 +90,6 @@ export class AuthController {
         await this.authService.sendNewPassword(dto.username);
     }
 
-    // update password
     @Patch('/password')
     @UseGuards(AuthGuard('jwt'))
     @ApiOperation({ summary: 'reset password' })

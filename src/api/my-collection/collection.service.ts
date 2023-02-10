@@ -34,6 +34,10 @@ export class CollectionService {
                 break;
             case CollectionSortBy.BOOKMARK_COUNT:
                 column = 'bookmarkCount';
+                break;
+            case CollectionSortBy.HIT_COUNT:
+                column = 'hitCount';
+                break;
         }
         return { order, column };
     }

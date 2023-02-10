@@ -3,11 +3,11 @@ import { CreateDateColumn, UpdateDateColumn } from 'typeorm';
 
 // exclude createdAt and updatedAt when return entity object
 export abstract class AbstractEntity {
-    @CreateDateColumn({ select: false })
+    @CreateDateColumn()
     @Exclude()
     createdAt: Date;
 
-    @UpdateDateColumn({ select: false })
+    @UpdateDateColumn()
     @Exclude()
     updatedAt: Date;
 }

@@ -4,7 +4,10 @@ export const ONE_DAY = 24 * ONE_HOUR;
 export const ONE_WEEK = 7 * ONE_DAY;
 export const ONE_YEAR = 365 * ONE_DAY;
 
-export enum Order {
-    ASC = 'ASC',
-    DESC = 'DESC'
+export enum TrendingDuration {
+    DAY = 'DAY',
+    WEEK = 'WEEK',
+    MONTH = 'MONTH',
+    THREE_MONTH = 'THREE_MONTH',
+    YEAR = 'YEAR'
 }

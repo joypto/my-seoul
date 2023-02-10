@@ -1,8 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { Builder } from 'builder-pattern';
-import { ONE_DAY } from 'src/constants/consts';
+import { ONE_DAY, TrendingDuration } from 'src/constants/consts';
 import { COLLECTION_HITS_CHECKER } from 'src/redis/redis.key';
 import { RedisService } from 'src/redis/redis.service';
+import { TimeUtil } from 'src/util/time.util';
 import { DataSource } from 'typeorm';
 import { Collection } from '../my-collection/collection.entity';
 import { User } from '../user/user.entity';
@@ -22,7 +23,6 @@ export class HitsService {
         return exists >= 1;
     }
 
-    // increase hits count
     async hits(user: User, collectionId: number): Promise<void> {
         if (await this.isDuplicateHits(user.id, collectionId)) return;
 
@@ -51,5 +51,22 @@ export class HitsService {
         }
         // set checker
         await this.redisService.setex(COLLECTION_HITS_CHECKER(collectionId, user.id), ONE_DAY, 1);
+    }
+
+    async mostHitCollections(duration: TrendingDuration, limit: number): Promise<Hits[]> {
+        return await this.dataSource
+            .getRepository(Hits)
+            .createQueryBuilder('hits')
+            .select('COUNT(hits.collectionId)', 'count')
+            .leftJoinAndSelect('hits.collection', 'collection')
+            .where('hits.createdAt > :time', {
+                time: new Date(
+                    (TimeUtil.nowToSeconds() - TimeUtil.trendingDurationToSeconds(duration)) * 1000
+                )
+            })
+            .groupBy('hits.collectionId')
+            .orderBy('count', 'DESC')
+            .limit(limit)
+            .getRawMany();
     }
 }
