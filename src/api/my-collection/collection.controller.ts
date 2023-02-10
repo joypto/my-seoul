@@ -71,13 +71,13 @@ export class CollectionController {
         return await this.collectionService.findByUserId(user.id, options);
     }
 
-    @Get('/trendings')
+    @Get('/hits')
     @ApiOperation({ summary: 'get trending collections' })
     async getTrendings(@Query() dto: TrendingDto): Promise<Hits[]> {
         return this.hitsService.getTrendingCollections(dto.duration, dto.limit);
     }
 
-    @Get('/viewed')
+    @Get('/hits/me')
     @ApiOperation({ summary: 'get latest viewed collections' })
     async getLatestViewed(@AuthUser() user: User): Promise<Hits[]> {
         return this.hitsService.getLatestViewedCollections(user.id);
