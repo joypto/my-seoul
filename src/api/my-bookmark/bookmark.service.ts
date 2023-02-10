@@ -8,7 +8,6 @@ import { Page } from '../common/page/page.dto';
 import { Collection } from '../my-collection/collection.entity';
 import { User } from '../user/user.entity';
 import { Bookmark } from './bookmark.entity';
-import { CreateBookmarkDto } from './dto/createBookmark.dto';
 
 @Injectable()
 export class BookmarkService {
@@ -18,7 +17,7 @@ export class BookmarkService {
         private readonly bookmarkRepository: Repository<Bookmark>
     ) {}
 
-    async create(user: User, dto: CreateBookmarkDto): Promise<void> {
+    async create(user: User, collectionId: number): Promise<void> {
         const queryRunner = this.dataSource.createQueryRunner();
         await queryRunner.connect();
         try {
@@ -26,13 +25,13 @@ export class BookmarkService {
             // save bookmark
             await queryRunner.manager.save(
                 Bookmark,
-                Builder(Bookmark).userId(user.id).collectionId(dto.collectionId).build()
+                Builder(Bookmark).userId(user.id).collectionId(collectionId).build()
             );
             // increase bookmark count
             await queryRunner.manager
                 .createQueryBuilder()
                 .update(Collection)
-                .where('id = :collectionId', { collectionId: dto.collectionId })
+                .where('id = :collectionId', { collectionId })
                 .set({ bookmarkCount: () => 'bookmarkCount + 1' })
                 .execute();
             await queryRunner.commitTransaction();

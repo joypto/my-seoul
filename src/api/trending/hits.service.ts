@@ -53,7 +53,7 @@ export class HitsService {
         await this.redisService.setex(COLLECTION_HITS_CHECKER(collectionId, user.id), ONE_DAY, 1);
     }
 
-    async mostHitCollections(duration: TrendingDuration, limit: number): Promise<Hits[]> {
+    async mostHitsCollections(duration: TrendingDuration, limit: number): Promise<Hits[]> {
         return await this.dataSource
             .getRepository(Hits)
             .createQueryBuilder('hits')
