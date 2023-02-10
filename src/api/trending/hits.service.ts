@@ -53,7 +53,7 @@ export class HitsService {
         await this.redisService.setex(COLLECTION_HITS_CHECKER(collectionId, user.id), ONE_DAY, 1);
     }
 
-    async mostHitsCollections(duration: TrendingDuration, limit: number): Promise<Hits[]> {
+    async getTrendingCollections(duration: TrendingDuration, limit: number): Promise<Hits[]> {
         return await this.dataSource
             .getRepository(Hits)
             .createQueryBuilder('hits')
@@ -68,5 +68,16 @@ export class HitsService {
             .orderBy('count', 'DESC')
             .limit(limit)
             .getRawMany();
+    }
+
+    async getLatestViewedCollections(userId: number): Promise<Hits[]> {
+        return await this.dataSource
+            .getRepository(Hits)
+            .createQueryBuilder('hits')
+            .leftJoinAndSelect('hits.collection', 'collection')
+            .where('hits.userId = :userId', { userId })
+            .orderBy('hits.createdAt', 'DESC')
+            .limit(30)
+            .getMany();
     }
 }

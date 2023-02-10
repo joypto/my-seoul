@@ -74,7 +74,13 @@ export class CollectionController {
     @Get('/trendings')
     @ApiOperation({ summary: 'get trending collections' })
     async getTrendings(@Query() dto: TrendingDto): Promise<Hits[]> {
-        return this.hitsService.mostHitsCollections(dto.duration, dto.limit);
+        return this.hitsService.getTrendingCollections(dto.duration, dto.limit);
+    }
+
+    @Get('/viewed')
+    @ApiOperation({ summary: 'get latest viewed collections' })
+    async getLatestViewed(@AuthUser() user: User): Promise<Hits[]> {
+        return this.hitsService.getLatestViewedCollections(user.id);
     }
 
     @Get('/:id')
