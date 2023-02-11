@@ -5,34 +5,35 @@ import { NextFunction, Request, Response } from 'express';
 export class LoggerMiddleware implements NestMiddleware {
     private readonly logger = new Logger(LoggerMiddleware.name);
 
-    public use(req: Request, res: Response, next: NextFunction) {
-        const startTime: number = Date.now();
-        const url = req.originalUrl || req.url || req.baseUrl || '-';
-        const reqLog = JSON.stringify({
-            method: req.method,
-            url: req.originalUrl || req.url || req.baseUrl || '-',
-            ip: req.ip,
-            userAgent: req.headers['user-agent']
+    private masking(body: { [field: string]: string }, fields: string[]) {
+        fields.forEach((field) => {
+            if (body.hasOwnProperty(field)) body[field] = '******';
         });
-        this.logger.log(reqLog);
+    }
+
+    use(req: Request, res: Response, next: NextFunction) {
+        const startTime: number = Date.now();
+        const { method, originalUrl, ip, body } = req;
+        this.masking(body, ['authCode', 'password', 'oldPassword', 'newPassword', 'refreshToken']);
+
+        const requestLog = `${method} ${originalUrl} ${ip}, body:${JSON.stringify(body)}`;
+        this.logger.log(requestLog);
 
         next();
 
         res.on('finish', () => {
             const endTime: number = Date.now();
-            const resLog = JSON.stringify({
-                url: req.originalUrl || req.url || req.baseUrl || '-',
-                statusCode: res.statusCode,
-                statusMessage: res.statusMessage,
-                handleTime: `${endTime - startTime} ms`
-            });
+            const { statusCode, statusMessage } = res;
+            const responseLog = `${method} ${originalUrl} ${ip}, status:{"code":${statusCode},"message":${statusMessage}}, ${
+                endTime - startTime
+            }ms`;
 
-            if (res.statusCode < 300) {
-                this.logger.log(resLog);
-            } else if (res.statusCode < 400) {
-                this.logger.warn(resLog);
+            if (statusCode < 400) {
+                this.logger.log(responseLog);
+            } else if (statusCode < 500) {
+                this.logger.warn(responseLog);
             } else {
-                this.logger.error(resLog);
+                this.logger.error(responseLog);
             }
         });
     }

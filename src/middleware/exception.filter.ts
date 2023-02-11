@@ -1,30 +1,25 @@
 import { ArgumentsHost, Catch, ExceptionFilter, HttpException, Logger } from '@nestjs/common';
 import { Request, Response } from 'express';
 
-export interface IExceptionResponse {
+type ExceptionResponse = {
     statusCode: number;
+    error: string;
     message: string;
-}
+};
 
 @Catch(HttpException)
 export class HttpExceptionFilter implements ExceptionFilter {
-    private readonly logger = new Logger(HttpExceptionFilter.name);
-
     catch(exception: HttpException, host: ArgumentsHost) {
-        const ctx = host.switchToHttp();
-        const request = ctx.getResponse<Request>();
-        const response = ctx.getResponse<Response>();
-        const status = exception.getStatus();
-        const message = exception.message;
+        const exceptionResponse = exception.getResponse() as ExceptionResponse;
+        const response = host.switchToHttp().getResponse<Response>();
 
-        this.logger.error(JSON.stringify({ path: request.path, message }));
-
-        const responseBody = exception.getResponse() as IExceptionResponse;
-        response.status(status).json({
-            statusCode: responseBody.statusCode,
-            message: responseBody.message,
-            timestamp: new Date().toISOString(),
-            path: request.url
+        response.status(exceptionResponse.statusCode).json({
+            statusCode: exceptionResponse.statusCode,
+            data: {
+                error: exceptionResponse.error,
+                message: exceptionResponse.message
+            },
+            timestamp: new Date().toISOString()
         });
     }
 }
