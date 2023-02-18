@@ -23,7 +23,7 @@ const swagger = (app: INestApplication) => {
 
     const document = SwaggerModule.createDocument(app, config);
     const theme = new SwaggerTheme('v3');
-    const options = { explorer: true, customeCss: theme.getBuffer('dark') };
+    const options = { explorer: true, customCss: theme.getBuffer('dark') };
     SwaggerModule.setup('api', app, document, options);
 };
 
