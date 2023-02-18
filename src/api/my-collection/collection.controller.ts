@@ -16,19 +16,21 @@ import { AuthGuard } from '@nestjs/passport';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AuthUser } from '../auth/authUser.decorator';
 import { Page } from '../common/page/page.dto';
-import { SearchCollectionOption } from './dto/searchCollection.dto';
 import { User } from '../user/user.entity';
 import { Collection } from './collection.entity';
 import { CollectionService } from './collection.service';
-import { CreateCollectionDto } from './dto/createCollection.dto';
-import { ReadCollectionDto } from './dto/readCollection.dto';
-import { UpdateCollectionDto } from './dto/updateCollection.dto';
 import { HitsService } from '../trending/hits.service';
 import { TrendingDto } from '../trending/dto/trending.dto';
 import { Hits } from '../trending/hits.entity';
 import { PageOption } from '../common/page/option.dto';
 import { Bookmark } from '../my-bookmark/bookmark.entity';
 import { BookmarkService } from '../my-bookmark/bookmark.service';
+import {
+    CreateCollectionDto,
+    ReadCollectionDto,
+    SearchCollectionOption,
+    UpdateCollectionDto
+} from './dto/collection.dto';
 
 @Controller('collections')
 @UsePipes(ValidationPipe)

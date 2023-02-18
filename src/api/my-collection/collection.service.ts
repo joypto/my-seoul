@@ -1,6 +1,5 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { RedisService } from 'src/redis/redis.service';
 import { PageUtil } from 'src/util/page.util';
 import { Brackets, Repository } from 'typeorm';
 import { Page } from '../common/page/page.dto';
@@ -8,13 +7,11 @@ import { Order } from '../common/search/search.type';
 import { CollectionSortBy, SortAscending } from '../common/search/sort.enum';
 import { User } from '../user/user.entity';
 import { Collection } from './collection.entity';
-import { SearchCollectionOption } from './dto/searchCollection.dto';
-import { UpdateCollectionDto } from './dto/updateCollection.dto';
+import { SearchCollectionOption, UpdateCollectionDto } from './dto/collection.dto';
 
 @Injectable()
 export class CollectionService {
     constructor(
-        private readonly redisService: RedisService,
         @InjectRepository(Collection)
         private readonly collectionRepository: Repository<Collection>
     ) {}
