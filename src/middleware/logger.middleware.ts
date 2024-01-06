@@ -14,9 +14,16 @@ export class LoggerMiddleware implements NestMiddleware {
     use(req: Request, res: Response, next: NextFunction) {
         const startTime: number = Date.now();
         const { method, originalUrl, ip, body } = req;
-        this.masking(body, ['authCode', 'password', 'oldPassword', 'newPassword', 'refreshToken']);
+        const bodyCopy = Object.assign({}, body);
+        this.masking(bodyCopy, [
+            'authCode',
+            'password',
+            'oldPassword',
+            'newPassword',
+            'refreshToken'
+        ]);
 
-        const requestLog = `${method} ${originalUrl} ${ip}, body:${JSON.stringify(body)}`;
+        const requestLog = `${method} ${originalUrl} ${ip}, body:${JSON.stringify(bodyCopy)}`;
         this.logger.log(requestLog);
 
         next();
