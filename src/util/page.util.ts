@@ -13,8 +13,8 @@ export class PageUtil<T> {
         queryBuilder: SelectQueryBuilder<T>,
         pageOptions: PageOption
     ): Promise<PageMeta> {
-        const itemCount = await queryBuilder.getCount();
-        return new PageMeta(pageOptions, itemCount);
+        const totalCount = await queryBuilder.getCount();
+        return new PageMeta(pageOptions, totalCount);
     }
 
     async getResponse(

@@ -9,7 +9,7 @@ export class PageOption {
     @IsOptional()
     @Min(1)
     @ApiPropertyOptional({ default: 1 })
-    readonly page?: number = 1;
+    readonly pageCount?: number = 1;
 
     @IsInt()
     @Type(() => Number)
@@ -17,13 +17,13 @@ export class PageOption {
     @Min(1)
     @Max(50)
     @ApiPropertyOptional({ default: 10 })
-    readonly take?: number = 10;
+    readonly itemCount?: number = 10;
 
     get skip(): number {
-        return (this.page - 1) * this.take;
+        return (this.pageCount - 1) * this.itemCount;
     }
 
     get pageOptions(): PageOption {
-        return Builder(PageOption).page(this.page).take(this.take).build();
+        return Builder(PageOption).pageCount(this.pageCount).itemCount(this.itemCount).build();
     }
 }

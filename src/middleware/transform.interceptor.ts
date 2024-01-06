@@ -1,5 +1,6 @@
 import { CallHandler, ExecutionContext, Injectable, NestInterceptor } from '@nestjs/common';
 import { map, Observable } from 'rxjs';
+import { Page } from 'src/api/common/page/page.dto';
 
 type Response<T> = {
     data: T;
@@ -13,9 +14,9 @@ export class TransformInterceptor<T> implements NestInterceptor<T, Response<T>> 
     ): Observable<any> | Promise<Observable<any>> {
         return next.handle().pipe(
             map((data) => ({
-                statusCode: context.switchToHttp().getResponse().statusCode,
-                data,
-                timestamp: new Date().toISOString()
+                code: context.switchToHttp().getResponse().statusCode,
+                meta: data instanceof Page ? data.meta : undefined,
+                data: data instanceof Page ? [...data.data] : [data]
             }))
         );
     }

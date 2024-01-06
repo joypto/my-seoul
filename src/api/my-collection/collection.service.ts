@@ -54,7 +54,7 @@ export class CollectionService {
             .orWhere('description like :keyword', { keyword: `%${options.keyword ? options.keyword : ''}%` })
             .orderBy(column, order)
             .skip(options.skip)
-            .take(options.take);
+            .take(options.itemCount);
         return await new PageUtil<Collection>().getResponse(queryBuilder, options);
     }
 
@@ -75,7 +75,7 @@ export class CollectionService {
             )
             .orderBy(column, order)
             .skip(options.skip)
-            .take(options.take);
+            .take(options.itemCount);
         return await new PageUtil<Collection>().getResponse(queryBuilder, options);
     }
 

@@ -24,8 +24,8 @@ export class SearchCollectionOption extends SearchOption {
 
     get serachOptions(): SearchCollectionOption {
         return Builder(SearchCollectionOption)
-            .page(this.page)
-            .take(this.take)
+            .pageCount(this.pageCount)
+            .itemCount(this.itemCount)
             .sortAscending(this.sortAscending)
             .sortBy(this.sortBy)
             .keyword(this.keyword)

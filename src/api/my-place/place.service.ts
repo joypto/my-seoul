@@ -24,7 +24,7 @@ export class PlaceService {
 
     async findAll(options: PageOption): Promise<Page<Place>> {
         const queryBuilder = this.placeRepository.createQueryBuilder('place');
-        queryBuilder.skip(options.skip).take(options.take);
+        queryBuilder.skip(options.skip).take(options.itemCount);
         return await new PageUtil<Place>().getResponse(queryBuilder, options);
     }
 
@@ -33,7 +33,7 @@ export class PlaceService {
         queryBuilder
             .where('collectionId = :collectionId', { collectionId })
             .skip(options.skip)
-            .take(options.take);
+            .take(options.itemCount);
         return await new PageUtil<Place>().getResponse(queryBuilder, options);
     }
 

@@ -49,7 +49,7 @@ export class BookmarkService {
             .leftJoinAndSelect('bookmark.collection', 'collection')
             .where('userId = :userId', { userId })
             .skip(options.skip)
-            .take(options.take);
+            .take(options.itemCount);
         return await new PageUtil<Bookmark>().getResponse(queryBuilder, options);
     }
 
@@ -59,7 +59,7 @@ export class BookmarkService {
             .leftJoinAndSelect('bookmark.user', 'user')
             .where('collectionId = :collectionId', { collectionId })
             .skip(options.skip)
-            .take(options.take);
+            .take(options.itemCount);
         return await new PageUtil<Bookmark>().getResponse(queryBuilder, options);
     }
 

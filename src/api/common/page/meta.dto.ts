@@ -3,29 +3,17 @@ import { PageOption } from './option.dto';
 
 export class PageMeta {
     @ApiProperty()
-    page: number;
-
-    @ApiProperty()
-    take: number;
+    pageCount: number;
 
     @ApiProperty()
     itemCount: number;
 
     @ApiProperty()
-    pageCount: number;
+    totalCount: number;
 
-    @ApiProperty()
-    hasPreviousPage: boolean;
-
-    @ApiProperty()
-    hasNextPage: boolean;
-
-    constructor(dto: PageOption, itemCount: number) {
-        this.page = dto.page;
-        this.take = dto.take;
-        this.itemCount = itemCount;
-        this.pageCount = Math.ceil(this.itemCount / this.take);
-        this.hasPreviousPage = this.page > 1;
-        this.hasNextPage = this.page < this.pageCount;
+    constructor(dto: PageOption, totalCount: number) {
+        this.pageCount = dto.pageCount;
+        this.itemCount = dto.itemCount;
+        this.totalCount = totalCount;
     }
 }
