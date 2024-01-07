@@ -1,4 +1,9 @@
-import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+    BadRequestException,
+    ForbiddenException,
+    Injectable,
+    NotFoundException
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ONE_DAY } from 'src/constants/consts';
 import { ADMIN_CODE, ADMIN_USERNAMES } from 'src/redis/redis.key';
@@ -30,7 +35,7 @@ export class AdminService {
 
     async giveRole(username: string): Promise<void> {
         const user = await this.userService.findOneByUsername(username);
-        if (!user) throw new NotFoundException('User not found');
+        if (!user) throw new NotFoundException(ERR_MSG.NOT_FOUND_USER);
         await this.redisService.rpush(ADMIN_USERNAMES, [username]);
 
         const code = await new RandomUtil().generateRandomString();
@@ -43,10 +48,10 @@ export class AdminService {
         if (count !== 0) {
             // first admin exists
             if (!(await this.isValidUsername(user.username))) {
-                throw new ForbiddenException('Invalid username');
+                throw new ForbiddenException(ERR_MSG.INVALID_USERNAME);
             }
             if (!(await this.isValidCode(user.username, code))) {
-                throw new ForbiddenException('Invalid admin code');
+                throw new ForbiddenException(ERR_MSG.INVALID_ADMINCODE);
             }
             await this.redisService
                 .multi()
@@ -57,7 +62,7 @@ export class AdminService {
             // first admin does not exist
             const validCode = await this.configService.get('ADMIN_CODE');
             if (code !== validCode) {
-                throw new ForbiddenException('Invalid admin code');
+                throw new ForbiddenException(ERR_MSG.INVALID_ADMINCODE);
             }
         }
         user.roles = [Role.ADMIN];

@@ -23,8 +23,10 @@ export class PlaceService {
     }
 
     async findAll(options: PageOption): Promise<Page<Place>> {
-        const queryBuilder = this.placeRepository.createQueryBuilder('place');
-        queryBuilder.skip(options.skip).take(options.itemCount);
+        const queryBuilder = this.placeRepository
+            .createQueryBuilder('place')
+            .skip(options.skip)
+            .take(options.itemCount);
         return await new PageUtil<Place>().getResponse(queryBuilder, options);
     }
 
@@ -46,18 +48,10 @@ export class PlaceService {
 
     async updateOneMine(user: User, placeId: number, dto: UpdatePlaceDto): Promise<Place> {
         const place = await this.findOneById(placeId);
-        if (!place.collection.isAuthor(user.id)) throw new BadRequestException('Invalid author');
+        if (!place.collection.isAuthor(user.id))
+            throw new BadRequestException(ERR_MSG.INVALID_AUTHOR);
 
-        if (dto.name) place.name = dto.name;
-        if (dto.description) place.description = dto.description;
-        if (dto.latitude && dto.latitude) {
-            place.latitude = dto.latitude;
-            place.longitude = dto.longitude;
-        }
-        if (dto.address) place.address = dto.address;
-        if (dto.collectionId) place.collectionId = dto.collectionId;
-
-        return await this.placeRepository.save(place);
+        return await this.placeRepository.save({ ...place, ...dto });
     }
 
     async deleteOneById(placeId: number): Promise<void> {
@@ -66,7 +60,8 @@ export class PlaceService {
 
     async deleteOneMine(user: User, placeId: number): Promise<void> {
         const place = await this.findOneById(placeId);
-        if (!place.collection.isAuthor(user.id)) throw new BadRequestException('Invalid author');
+        if (!place.collection.isAuthor(user.id))
+            throw new BadRequestException(ERR_MSG.INVALID_AUTHOR);
         await this.deleteOneById(placeId);
     }
 }

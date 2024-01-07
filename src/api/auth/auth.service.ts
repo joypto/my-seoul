@@ -2,6 +2,7 @@ import {
     BadRequestException,
     ConflictException,
     Injectable,
+    NotFoundException,
     UnauthorizedException
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
@@ -37,10 +38,6 @@ export class AuthService {
         private readonly redisService: RedisService
     ) {}
 
-    private async isValidHash(requestedData: string, ownedData: string): Promise<boolean> {
-        return await bcrypt.compare(requestedData, ownedData);
-    }
-
     private async isEmailAuthenticated(email: string): Promise<boolean> {
         const isEmailAuthed = await this.redisService.get(EMAIL_AUTH_STATUS(email));
         return isEmailAuthed === 'auth';
@@ -49,6 +46,10 @@ export class AuthService {
     private async hash<T>(data: T): Promise<string> {
         const salt = await bcrypt.genSalt();
         return await bcrypt.hash(data, salt);
+    }
+
+    private async match(requestedData: string, ownedData: string): Promise<boolean> {
+        return await bcrypt.compare(requestedData, ownedData);
     }
 
     private async generateTokens(payload: Payload): Promise<Token> {
@@ -72,7 +73,9 @@ export class AuthService {
 
     async sendEmailAuthCode(dto: EmailDto): Promise<void> {
         const user = await this.userService.findOneByEmail(dto.email);
-        if (user) throw new ConflictException('Email already exist');
+        if (user) {
+            throw new ConflictException(ERR_MSG.DUPLICATE_EMAIL);
+        }
 
         const authCode = await new RandomUtil().generateRandomString();
         await this.redisService.setex(EMAIL_AUTH_CODE(dto.email), 3 * ONE_DAY, authCode);
@@ -94,7 +97,7 @@ export class AuthService {
 
     async signUp(dto: SignupDto): Promise<void> {
         if (!(await this.isEmailAuthenticated(dto.email))) {
-            throw new BadRequestException('Email not authenticated');
+            throw new UnauthorizedException(ERR_MSG.NOT_AUTHENTICATED);
         }
 
         const hashedPassword = await this.hash<string>(dto.password);
@@ -108,13 +111,15 @@ export class AuthService {
     async signIn(dto: CredentialDto): Promise<Token> {
         const user = await this.userService.findOneByUsername(dto.username);
 
-        if (user && (await this.isValidHash(dto.password, user.password))) {
+        if (user && (await this.match(dto.password, user.password))) {
             const payload = { username: dto.username };
             const tokens = await this.generateTokens(payload);
             await this.updateRefreshToken(dto.username, tokens.refreshToken);
+
             return tokens;
         }
-        throw new UnauthorizedException('Invalid credentials');
+
+        throw new UnauthorizedException(ERR_MSG.UNMATCHED_PASSWORD);
     }
 
     async signOut(dto: UsernameDto): Promise<void> {
@@ -124,22 +129,21 @@ export class AuthService {
 
     async refresh(dto: RefreshDto): Promise<Token> {
         const user = await this.userService.findOneByUsername(dto.username);
-        if (
-            user &&
-            user.refreshToken &&
-            (await this.isValidHash(dto.refreshToken, user.refreshToken))
-        ) {
+
+        if (user && user.refreshToken && (await this.match(dto.refreshToken, user.refreshToken))) {
             const payload = { username: dto.username };
             const tokens = await this.generateTokens(payload);
             await this.updateRefreshToken(dto.username, tokens.refreshToken);
+
             return tokens;
         }
-        throw new UnauthorizedException('Invalid refresh token');
+
+        throw new UnauthorizedException(ERR_MSG.UNMATCHED_REFRESHTOKEN);
     }
 
     async sendNewPassword(username: string): Promise<void> {
         const user = await this.userService.findOneByUsername(username);
-        if (!user) throw new BadRequestException('Invalid User');
+        if (!user) throw new NotFoundException(ERR_MSG.NOT_FOUND_USER);
 
         const newPassword = await new RandomUtil().generateRandomString();
         await this.smtpService.sendNewPassword(user.email, newPassword);
@@ -153,10 +157,10 @@ export class AuthService {
     async updatePassword(username: string, dto: UpdatePasswordDto): Promise<void> {
         const user = await this.userService.findOneByUsername(username);
         if (!user) {
-            throw new BadRequestException('Invalid User');
+            throw new NotFoundException(ERR_MSG.NOT_FOUND_USER);
         }
-        if (!(await this.isValidHash(dto.oldPassword, user.password))) {
-            throw new BadRequestException('Invalid password');
+        if (!(await this.match(dto.oldPassword, user.password))) {
+            throw new UnauthorizedException(ERR_MSG.UNMATCHED_PASSWORD);
         }
 
         const hashedPassword = await this.hash<string>(dto.newPassword);

@@ -89,7 +89,7 @@ export class CollectionService {
         dto: UpdateCollectionDto
     ): Promise<Collection> {
         const collection = await this.findOneById(collectionId);
-        if (!collection.isAuthor(user.id)) throw new BadRequestException('Invalid author');
+        if (!collection.isAuthor(user.id)) throw new BadRequestException(ERR_MSG.INVALID_AUTHOR);
 
         if (dto.name) collection.name = dto.name;
         if (dto.description) collection.description = dto.description;

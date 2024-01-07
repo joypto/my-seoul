@@ -13,7 +13,7 @@ export class UserService {
 
     async create(user: User): Promise<void> {
         if (await this.findOneByUsername(user.username)) {
-            throw new ConflictException('Duplicate username');
+            throw new ConflictException(ERR_MSG.DUPLICATE_USERNAME);
         }
         await this.userRepository.insert(user);
     }

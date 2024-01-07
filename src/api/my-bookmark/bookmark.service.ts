@@ -37,7 +37,7 @@ export class BookmarkService {
             await queryRunner.commitTransaction();
         } catch (err) {
             await queryRunner.rollbackTransaction();
-            throw new ConflictException('Duplicate bookmark');
+            throw new ConflictException(ERR_MSG.DUPLICATE_BOOKMARK);
         } finally {
             await queryRunner.release();
         }
@@ -73,7 +73,7 @@ export class BookmarkService {
                 Bookmark,
                 Builder(Bookmark).userId(user.id).collectionId(collectionId).build()
             );
-            if (affected === 0) throw new NotFoundException('Bookmark Not found');
+            if (affected === 0) throw new NotFoundException(ERR_MSG.NOT_FOUND_BOOKMARK);
             // decrease bookmark count
             await queryRunner.manager
                 .createQueryBuilder()
